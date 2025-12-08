@@ -13,7 +13,6 @@ const vt323 = VT323({
 export const metadata = {
   title: "Mothership",
   description: "Interactive maps for Mothership",
-  generator: "v0.dev",
   icons: {
     icon: "/images/logo.png",
     apple: "/images/logo.png",
