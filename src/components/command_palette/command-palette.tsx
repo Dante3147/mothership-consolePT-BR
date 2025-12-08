@@ -26,11 +26,10 @@ export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const { scenario, setScenario } = useScenario();
-  const { setCurrentView } = useView();
+  const { scenario } = useScenario();
+  const { currentView, setCurrentView } = useView();
 
   const params = useParams();
-  const currentViewType = params.viewType as string;
   const scenarioId = params.scenario as string;
 
   // Determine which views are actually supported for the current scenario
@@ -111,8 +110,7 @@ export function CommandPalette() {
                 key={map.id}
                 onSelect={() =>
                   runCommand(() => {
-                    setScenario(map);
-                    router.push(`/${index}/${currentViewType}`);
+                    router.push(`/${index}/${currentView}`);
                   })
                 }
                 className={`${

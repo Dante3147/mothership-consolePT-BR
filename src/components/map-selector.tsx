@@ -2,8 +2,9 @@
 
 import { useScenario } from "@/src/context/scenario-context";
 import { allThemes, useTheme } from "@/src/context/theme-context";
+import { useView } from "@/src/context/view-context";
 import { allScenarios, Scenario } from "@/src/models/scenario";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 //FIXME: rename
@@ -15,16 +16,45 @@ export function MapSelectorContent({
   showMapSelector: boolean;
   setShowMapSelector: (show: boolean) => void;
 }) {
-  const { scenario, setScenario } = useScenario();
+  const { scenario } = useScenario();
   const { theme, setTheme } = useTheme();
+  const { currentView } = useView();
   const router = useRouter();
-  const params = useParams();
-  const currentViewType = params.viewType as string;
 
   const selectScenario = (scenario: Scenario, index: number) => {
-    setScenario(scenario);
+    // Determine which views are supported for the *target* scenario
+    const hasExteriorView =
+      Array.isArray(scenario.exteriorStats) &&
+      scenario.exteriorStats.length > 0;
+    const hasInteriorView = !!scenario.map;
+    const hasAsciiInteriorView = !!scenario.asciiMap;
+
+    // Pick the best target view:
+    // 1. Keep the current view if it's supported by the new scenario
+    // 2. Otherwise, fall back to exterior if available
+    // 3. Otherwise, pick any other supported view
+    let targetView = currentView;
+
+    const currentIsSupported =
+      (currentView === "exterior" && hasExteriorView) ||
+      (currentView === "interior" && hasInteriorView) ||
+      (currentView === "interior-ascii" && hasAsciiInteriorView);
+
+    if (!currentIsSupported) {
+      if (hasExteriorView) {
+        targetView = "exterior";
+      } else if (hasInteriorView) {
+        targetView = "interior";
+      } else if (hasAsciiInteriorView) {
+        targetView = "interior-ascii";
+      } else {
+        // Fallback: keep whatever we had, even if it renders as "unavailable"
+        targetView = "exterior";
+      }
+    }
+
     setShowMapSelector(false);
-    router.push(`/${index}/${currentViewType}`);
+    router.push(`/${index}/${targetView}`);
   };
 
   useEffect(() => {

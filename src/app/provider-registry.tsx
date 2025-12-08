@@ -20,7 +20,7 @@ import { useParams } from "next/navigation";
 export function ProviderRegistry({ children }: { children: React.ReactNode }) {
   const params = useParams();
   const scenario = params.scenario as string;
-  const viewType = params.viewType as string;
+  const viewType = params.view as string;
 
   return (
     <AudioProvider>

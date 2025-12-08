@@ -14,6 +14,7 @@ import { useDiagnostics } from "@/src/context/diagnostics-context";
 import { useEmergency } from "@/src/context/emergency-context";
 import { useScenario } from "@/src/context/scenario-context";
 import { useView } from "@/src/context/view-context";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 /**
@@ -72,9 +73,57 @@ function MainContent({
   showDiagnostics: boolean;
   setShowDiagnostics: (show: boolean) => void;
 }) {
-  const { currentView } = useView();
+  const { currentView, setCurrentView } = useView();
   const { diagnosticsVisible } = useDiagnostics();
   const { scenario } = useScenario();
+  const router = useRouter();
+  const params = useParams();
+  const scenarioId = params.scenario as string;
+  const viewParam = (params.view as string) || "exterior";
+
+  // Keep the current view and URL in sync and ensure unsupported/illegal
+  // views always fall back to the exterior view.
+  useEffect(() => {
+    const hasExteriorView =
+      Array.isArray(scenario.exteriorStats) &&
+      scenario.exteriorStats.length > 0;
+    const hasInteriorView = !!scenario.map;
+    const hasAsciiInteriorView = !!scenario.asciiMap;
+
+    const isSupportedView =
+      (viewParam === "exterior" && hasExteriorView) ||
+      (viewParam === "interior" && hasInteriorView) ||
+      (viewParam === "interior-ascii" && hasAsciiInteriorView);
+
+    // If the requested view is not supported for this scenario (or is just
+    // an invalid string), redirect to exterior.
+    if (!isSupportedView) {
+      if (hasExteriorView) {
+        if (currentView !== "exterior") {
+          setCurrentView("exterior");
+        }
+        if (viewParam !== "exterior") {
+          router.replace(`/${scenarioId}/exterior`);
+        }
+      }
+      return;
+    }
+
+    // If the URL view is valid and supported but doesn't match the context,
+    // update the context to match the URL.
+    if (viewParam !== currentView) {
+      setCurrentView(viewParam as any);
+    }
+  }, [
+    currentView,
+    scenario.asciiMap,
+    scenario.exteriorStats,
+    scenario.map,
+    router,
+    scenarioId,
+    setCurrentView,
+    viewParam,
+  ]);
 
   const dataLabel = () => {
     switch (scenario.type) {
