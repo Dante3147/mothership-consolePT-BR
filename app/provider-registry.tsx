@@ -13,7 +13,7 @@ import { ThemeProvider } from "@/lib/context/theme-context";
 import { ViewProvider } from "@/lib/context/view-context";
 import { useParams } from "next/navigation";
 
-export function ClientLayout({ children }: { children: React.ReactNode }) {
+export function ProviderRegistry({ children }: { children: React.ReactNode }) {
   const params = useParams();
   const mapId = params.mapId as string;
   const viewType = params.viewType as string;
