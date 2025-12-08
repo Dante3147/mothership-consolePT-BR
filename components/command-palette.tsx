@@ -1,0 +1,179 @@
+"use client";
+
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { DialogTitle } from "@/components/ui/dialog";
+import { useScenario } from "@/lib/context/scenario-context";
+import { allThemes, useTheme } from "@/lib/context/theme-context";
+import { useView } from "@/lib/context/view-context";
+import { allScenarios } from "@/lib/models/scenario";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { ImageDetails } from "./images/image-details";
+
+export function CommandPalette() {
+  const [open, setOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const router = useRouter();
+  const { theme, setTheme } = useTheme();
+  const { scenario, setScenario } = useScenario();
+  const { setCurrentView } = useView();
+
+  const params = useParams();
+  const currentViewType = params.viewType as string;
+  const mapId = params.mapId as string;
+
+  const images = scenario.images || [];
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "p" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen((open) => !open);
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
+
+  const runCommand = (command: () => void) => {
+    setOpen(false);
+    command();
+  };
+
+  const handleImageSelect = (imageName: string) => {
+    setSelectedImage(imageName);
+    setOpen(false);
+  };
+
+  const selectedImageData = images.find((c) => c.title === selectedImage);
+
+  return (
+    <>
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <DialogTitle className="sr-only">Command Palette</DialogTitle>
+        <CommandInput
+          placeholder="Type a command or search..."
+          className="text-white"
+        />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Navigation">
+            <CommandItem
+              onSelect={() =>
+                runCommand(() => {
+                  setCurrentView("pcs");
+                  router.push(`/${mapId}/pcs`);
+                })
+              }
+            >
+              Navigation: PCs
+            </CommandItem>
+            <CommandItem
+              onSelect={() =>
+                runCommand(() => {
+                  setCurrentView("exterior");
+                  router.push(`/${mapId}/exterior`);
+                })
+              }
+            >
+              Navigation: Exterior
+            </CommandItem>
+            <CommandItem
+              onSelect={() =>
+                runCommand(() => {
+                  setCurrentView("interior");
+                  router.push(`/${mapId}/interior`);
+                })
+              }
+            >
+              Navigation: Interior
+            </CommandItem>
+            <CommandItem
+              onSelect={() =>
+                runCommand(() => {
+                  setCurrentView("interior-ascii");
+                  router.push(`/${mapId}/interior-ascii`);
+                })
+              }
+            >
+              Navigation: ASCII Interior
+            </CommandItem>
+            {scenario.tables?.map((table, index) => (
+              <CommandItem
+                key={table.title}
+                onSelect={() =>
+                  runCommand(() => {
+                    setCurrentView(`table-${index}`);
+                    router.push(`/${mapId}/table-${index}`);
+                  })
+                }
+              >
+                Navigation: {table.title}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+          {images.length > 0 && (
+            <CommandGroup heading="Images">
+              {images.map((image) => (
+                <CommandItem
+                  key={image.title}
+                  onSelect={() => handleImageSelect(image.title)}
+                >
+                  Image: {image.title.toUpperCase()}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+          <CommandGroup heading="Scenarios">
+            {allScenarios.map((map, index) => (
+              <CommandItem
+                key={map.id}
+                onSelect={() =>
+                  runCommand(() => {
+                    setScenario(map);
+                    router.push(`/${index}/${currentViewType}`);
+                  })
+                }
+                className={`${
+                  map.id === scenario.id ? "bg-primary/20" : "text-primary"
+                }`}
+              >
+                Scenario: {map.id.toUpperCase()}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+          <CommandGroup heading="Theme">
+            {allThemes.map((themeOption) => (
+              <CommandItem
+                key={themeOption}
+                onSelect={() => runCommand(() => setTheme(themeOption))}
+                className={`${themeOption} ${
+                  themeOption === theme ? "bg-primary/20" : "text-primary"
+                }`}
+              >
+                Theme: {themeOption.toUpperCase()}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
+
+      {/* Image Details Modal */}
+      {selectedImageData && (
+        <ImageDetails
+          image={selectedImageData}
+          isOpen={!!selectedImage}
+          onClose={() => setSelectedImage(null)}
+        />
+      )}
+    </>
+  );
+}
