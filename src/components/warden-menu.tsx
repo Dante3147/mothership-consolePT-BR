@@ -7,14 +7,12 @@ import { allScenarios, Scenario } from "@/src/models/scenario";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-//FIXME: rename
-
-export function MapSelectorContent({
-  showMapSelector,
-  setShowMapSelector,
+export function WardenMenu({
+  showWardenMenu,
+  setShowWardenMenu,
 }: {
-  showMapSelector: boolean;
-  setShowMapSelector: (show: boolean) => void;
+  showWardenMenu: boolean;
+  setShowWardenMenu: (show: boolean) => void;
 }) {
   const { scenario } = useScenario();
   const { theme, setTheme } = useTheme();
@@ -53,14 +51,14 @@ export function MapSelectorContent({
       }
     }
 
-    setShowMapSelector(false);
+    setShowWardenMenu(false);
     router.push(`/${index}/${targetView}`);
   };
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setShowMapSelector(false);
+        setShowWardenMenu(false);
       }
     };
 
@@ -71,7 +69,7 @@ export function MapSelectorContent({
     };
   }, []);
 
-  if (!showMapSelector) return null;
+  if (!showWardenMenu) return null;
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
@@ -110,7 +108,7 @@ export function MapSelectorContent({
 
         <div className="mt-4 flex justify-end">
           <button
-            onClick={() => setShowMapSelector(false)}
+            onClick={() => setShowWardenMenu(false)}
             className="px-3 py-1 md:px-4 md:py-2 border border-primary hover:bg-primary/20 rounded"
           >
             CLOSE

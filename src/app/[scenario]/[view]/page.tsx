@@ -9,7 +9,7 @@ import { AsciiInteriorView } from "@/src/components/interior/ascii-interior-view
 import { DiagnosticsView } from "@/src/components/interior/diagnostics-view";
 import { InfoPanel } from "@/src/components/interior/info-panel";
 import { StationMap as StationMapComponent } from "@/src/components/interior/station-map";
-import { MapSelectorContent } from "@/src/components/map-selector";
+import { WardenMenu } from "@/src/components/warden-menu";
 import { useDiagnostics } from "@/src/context/diagnostics-context";
 import { useEmergency } from "@/src/context/emergency-context";
 import { useScenario } from "@/src/context/scenario-context";
@@ -21,7 +21,7 @@ import { useEffect, useState } from "react";
  * Page that allows selecting a view for the current scenario.
  */
 export default function ViewSelector() {
-  const [showMapSelector, setShowMapSelector] = useState(false);
+  const [showWardenMenu, setShowWardenMenu] = useState(false);
   const [showDiagnostics, setShowDiagnostics] = useState(false);
   const { emergency } = useEmergency();
 
@@ -30,8 +30,8 @@ export default function ViewSelector() {
   const emergencyClass =
     emergency.active && emergency.alarm ? "emergency-mode" : "";
 
-  const toggleMapSelector = () => {
-    setShowMapSelector((prev) => !prev);
+  const toggleWardenMenu = () => {
+    setShowWardenMenu((prev) => !prev);
   };
 
   // Add keyboard shortcut to toggle map selector
@@ -40,7 +40,7 @@ export default function ViewSelector() {
       // Check for Cmd+K (Mac) or Ctrl+K (Windows/Linux)
       if ((event.metaKey || event.ctrlKey) && event.key === "k") {
         event.preventDefault();
-        setShowMapSelector((prev) => !prev);
+        setShowWardenMenu((prev) => !prev);
       }
     };
 
@@ -51,12 +51,12 @@ export default function ViewSelector() {
   return (
     <main className="min-h-screen p-2 md:p-4">
       <div className={`${emergencyClass} text-primary`}>
-        <MapSelectorContent
-          showMapSelector={showMapSelector}
-          setShowMapSelector={setShowMapSelector}
+        <WardenMenu
+          showWardenMenu={showWardenMenu}
+          setShowWardenMenu={setShowWardenMenu}
         />
         <MainContent
-          toggleMapSelector={toggleMapSelector}
+          toggleWardenMenu={toggleWardenMenu}
           showDiagnostics={showDiagnostics}
           setShowDiagnostics={setShowDiagnostics}
         />
@@ -67,9 +67,9 @@ export default function ViewSelector() {
 }
 
 function MainContent({
-  toggleMapSelector,
+  toggleWardenMenu,
 }: {
-  toggleMapSelector: () => void;
+  toggleWardenMenu: () => void;
   showDiagnostics: boolean;
   setShowDiagnostics: (show: boolean) => void;
 }) {
@@ -203,7 +203,7 @@ function MainContent({
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-2 md:gap-4 mt-2 md:mt-4">
         {renderMainContent()}
       </div>
-      <Footer onTerminalClick={toggleMapSelector} />
+      <Footer onTerminalClick={toggleWardenMenu} />
     </div>
   );
 }
