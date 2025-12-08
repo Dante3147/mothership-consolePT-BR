@@ -2,6 +2,12 @@ import { useAudio } from "@/src/context/audio-context";
 import { useEmergency } from "@/src/context/emergency-context";
 import { useEffect, useState } from "react";
 
+/**
+ * Menu for controlling the emergency protocol.
+ *
+ * Allows activating and deactivating the emergency protocol,
+ * as well as setting the countdown duration.
+ */
 export function EmergencyMenu({
   setShowEmergencyMenu,
 }: {

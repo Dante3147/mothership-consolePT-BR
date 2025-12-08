@@ -16,7 +16,10 @@ import { useScenario } from "@/src/context/scenario-context";
 import { useView } from "@/src/context/view-context";
 import { useEffect, useState } from "react";
 
-export default function Home() {
+/**
+ * Page that allows selecting a view for the current scenario.
+ */
+export default function ViewSelector() {
   const [showMapSelector, setShowMapSelector] = useState(false);
   const [showDiagnostics, setShowDiagnostics] = useState(false);
   const { emergency } = useEmergency();
@@ -33,8 +36,8 @@ export default function Home() {
   // Add keyboard shortcut to toggle map selector
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Check for Cmd+I (Mac) or Ctrl+I (Windows/Linux)
-      if ((event.metaKey || event.ctrlKey) && event.key === "i") {
+      // Check for Cmd+K (Mac) or Ctrl+K (Windows/Linux)
+      if ((event.metaKey || event.ctrlKey) && event.key === "k") {
         event.preventDefault();
         setShowMapSelector((prev) => !prev);
       }

@@ -12,6 +12,11 @@ import { ThemeProvider } from "@/src/context/theme-context";
 import { ViewProvider } from "@/src/context/view-context";
 import { useParams } from "next/navigation";
 
+/**
+ * Provider registry for the application.
+ *
+ * Provides the global providers for the application.
+ */
 export function ProviderRegistry({ children }: { children: React.ReactNode }) {
   const params = useParams();
   const scenario = params.scenario as string;

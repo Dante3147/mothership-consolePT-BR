@@ -7,7 +7,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 //FIXME: rename
-//FIXME: add K shortcut
 
 export function MapSelectorContent({
   showMapSelector,

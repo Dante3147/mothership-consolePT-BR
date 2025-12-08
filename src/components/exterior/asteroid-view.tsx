@@ -9,6 +9,8 @@ import * as THREE from "three";
 
 const orbitRadius = 400;
 
+//FIXME: doced till here ---
+
 // Create a group to hold both the asteroid and mining facility so they rotate together
 function AsteroidWithMining() {
   const groupRef = useRef<THREE.Group>(null);

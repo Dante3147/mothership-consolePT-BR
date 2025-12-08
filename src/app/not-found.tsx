@@ -3,6 +3,11 @@
 import { Button } from "@/src/components/button";
 import { useRouter } from "next/navigation";
 
+/**
+ * Page that displays when a route is not found.
+ *
+ * Redirects to the main terminal.
+ */
 export default function NotFound() {
   const router = useRouter();
 

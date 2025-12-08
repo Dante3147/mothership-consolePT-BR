@@ -16,6 +16,12 @@ import { allScenarios } from "@/src/models/scenario";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+/**
+ * Command palette for the application.
+ *
+ * Offers a list of commands to navigate to different views and scenarios.
+ * Can be opened with the "Cmd+P" or "Ctrl+P" key.
+ */
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const router = useRouter();

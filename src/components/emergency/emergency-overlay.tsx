@@ -3,6 +3,11 @@
 import { useEmergency } from "@/src/context/emergency-context";
 import { useEffect, useState } from "react";
 
+/**
+ * Overlay that displays the emergency protocol countdown.
+ *
+ * Shows a countdown timer when the emergency protocol is active.
+ */
 export function EmergencyOverlay() {
   const { emergency } = useEmergency();
   const [isVisible, setIsVisible] = useState(false);

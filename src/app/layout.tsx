@@ -20,6 +20,11 @@ export const metadata = {
   },
 };
 
+/**
+ * Root layout for the application.
+ *
+ * Provides the global layout for the application.
+ */
 export default function RootLayout({
   children,
 }: {
