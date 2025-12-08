@@ -1,6 +1,5 @@
 "use client";
 
-import { useMarkers } from "@/src/context/marker-context";
 import { useScenario } from "@/src/context/scenario-context";
 import type { RoomDefinition, RoomId } from "@/src/models/station-graph-map";
 import { type JSX, useEffect, useState } from "react";
@@ -9,20 +8,13 @@ export function StationMap() {
   const { scenario, map, activeRooms, airlockStates } = useScenario();
   if (!map) return <div>Loading...</div>;
 
-  const { markers, addMarker, removeMarker, updateMarker } = useMarkers();
   const [connections, setConnections] = useState<
     Array<{ from: RoomId; to: RoomId }>
   >([]);
   const [roomPositions, setRoomPositions] = useState<
     Map<RoomId, { x: number; y: number }>
   >(new Map());
-  const [isDragging, setIsDragging] = useState<string | null>(null);
-  const [showMarkerModal, setShowMarkerModal] = useState(false);
-  const [markerText, setMarkerText] = useState("");
-  const [clickPosition, setClickPosition] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
+
   const [availableSpace, setAvailableSpace] = useState<{
     width: number;
     height: number;
@@ -277,93 +269,6 @@ export function StationMap() {
     );
   };
 
-  const handleMarkerDragStart = (e: React.MouseEvent, markerId: string) => {
-    e.preventDefault();
-    setIsDragging(markerId);
-  };
-
-  const handleMarkerDrag = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-
-    const svg = e.currentTarget.closest("svg");
-    if (!svg) return;
-
-    const point = svg.createSVGPoint();
-    point.x = e.clientX;
-    point.y = e.clientY;
-
-    const ctm = svg.getScreenCTM();
-    if (!ctm) return;
-
-    const svgPoint = point.matrixTransform(ctm.inverse());
-
-    updateMarker(isDragging, { x: svgPoint.x, y: svgPoint.y });
-  };
-
-  const handleMarkerDragEnd = () => {
-    setIsDragging(null);
-  };
-
-  const handleMarkerContextMenu = (e: React.MouseEvent, markerId: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    removeMarker(markerId);
-  };
-
-  const handleMapContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const svg = e.currentTarget.closest("svg");
-    if (!svg) return;
-
-    const point = svg.createSVGPoint();
-    point.x = e.clientX;
-    point.y = e.clientY;
-
-    const ctm = svg.getScreenCTM();
-    if (!ctm) return;
-
-    const svgPoint = point.matrixTransform(ctm.inverse());
-    setClickPosition({ x: svgPoint.x, y: svgPoint.y });
-    setShowMarkerModal(true);
-  };
-
-  const handleMarkerSubmit = () => {
-    if (!markerText.trim() || !clickPosition) return;
-
-    addMarker({
-      text: markerText.toUpperCase(),
-      x: clickPosition.x,
-      y: clickPosition.y,
-    });
-    setMarkerText("");
-    setShowMarkerModal(false);
-    setClickPosition(null);
-  };
-
-  const renderMarkers = () => {
-    return markers.map((marker) => (
-      <g
-        key={marker.id}
-        transform={`translate(${marker.x}, ${marker.y})`}
-        onMouseDown={(e) => handleMarkerDragStart(e, marker.id)}
-        onContextMenu={(e) => handleMarkerContextMenu(e, marker.id)}
-        className="cursor-move crt-effect"
-        style={{ pointerEvents: "all" }}
-      >
-        <text
-          x={0}
-          y={0}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          className="fill-white text-base font-bold"
-          style={{ textShadow: "0 0 2px rgba(0,0,0,0.5)" }}
-        >
-          {`{{${marker.text}}}`}
-        </text>
-      </g>
-    ));
-  };
-
   const gridLineColor = "border-primary/20";
 
   return (
@@ -419,10 +324,6 @@ export function StationMap() {
         viewBox={`0 0 ${availableSpace.width} ${availableSpace.height}`}
         preserveAspectRatio="xMidYMid meet"
         style={{ position: "relative", zIndex: 1 }}
-        onMouseMove={handleMarkerDrag}
-        onMouseUp={handleMarkerDragEnd}
-        onMouseLeave={handleMarkerDragEnd}
-        onContextMenu={handleMapContextMenu}
       >
         <g>
           {renderConnections()}
@@ -436,50 +337,8 @@ export function StationMap() {
                 return renderAirlock(room);
             }
           })}
-          {renderMarkers()}
         </g>
       </svg>
-
-      {showMarkerModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black border border-primary p-4 rounded max-w-sm">
-            <h3 className="text-xl font-bold mb-2">ADD MARKER</h3>
-            <div className="space-y-2 mb-4">
-              <input
-                type="text"
-                value={markerText}
-                onChange={(e) => setMarkerText(e.target.value)}
-                placeholder="MARKER TEXT"
-                autoFocus={true}
-                className="w-full bg-black border border-primary p-2 rounded text-primary uppercase"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleMarkerSubmit();
-                  }
-                }}
-              />
-            </div>
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => {
-                  setShowMarkerModal(false);
-                  setMarkerText("");
-                  setClickPosition(null);
-                }}
-                className="px-4 py-2 border border-primary rounded hover:bg-primary/10"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleMarkerSubmit}
-                className="px-4 py-2 border border-primary rounded hover:bg-primary/10"
-              >
-                Add
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
