@@ -69,16 +69,6 @@ export function CommandPalette() {
             <CommandItem
               onSelect={() =>
                 runCommand(() => {
-                  setCurrentView("pcs");
-                  router.push(`/${mapId}/pcs`);
-                })
-              }
-            >
-              Navigation: PCs
-            </CommandItem>
-            <CommandItem
-              onSelect={() =>
-                runCommand(() => {
                   setCurrentView("exterior");
                   router.push(`/${mapId}/exterior`);
                 })
@@ -106,19 +96,6 @@ export function CommandPalette() {
             >
               Navigation: ASCII Interior
             </CommandItem>
-            {scenario.tables?.map((table, index) => (
-              <CommandItem
-                key={table.title}
-                onSelect={() =>
-                  runCommand(() => {
-                    setCurrentView(`table-${index}`);
-                    router.push(`/${mapId}/table-${index}`);
-                  })
-                }
-              >
-                Navigation: {table.title}
-              </CommandItem>
-            ))}
           </CommandGroup>
           {images.length > 0 && (
             <CommandGroup heading="Images">

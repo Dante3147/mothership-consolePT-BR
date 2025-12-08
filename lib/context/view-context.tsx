@@ -2,12 +2,7 @@
 
 import { createContext, type ReactNode, useContext, useState } from "react";
 
-export type ViewType =
-  | "interior"
-  | "exterior"
-  | "interior-ascii"
-  | `table-${number}`
-  | "pcs";
+export type ViewType = "interior" | "exterior" | "interior-ascii";
 
 type ViewContextType = {
   currentView: ViewType;
@@ -28,8 +23,7 @@ export function ViewProvider({
     if (
       initialViewType === "interior" ||
       initialViewType === "exterior" ||
-      initialViewType === "interior-ascii" ||
-      initialViewType === "pcs"
+      initialViewType === "interior-ascii"
     ) {
       return initialViewType;
     }

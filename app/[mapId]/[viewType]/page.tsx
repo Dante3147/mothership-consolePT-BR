@@ -10,9 +10,6 @@ import { DiagnosticsView } from "@/components/interior/diagnostics-view";
 import { InfoPanel } from "@/components/interior/info-panel";
 import { StationMap as StationMapComponent } from "@/components/interior/station-map";
 import { MapSelectorContent } from "@/components/map-selector";
-import { PCsSidebar } from "@/components/pcs/pcs-sidebar";
-import { PCsView } from "@/components/pcs/pcs-view";
-import { TableView } from "@/components/table/table-view";
 import { useDiagnostics } from "@/lib/context/diagnostics-context";
 import { useEmergency } from "@/lib/context/emergency-context";
 import { useScenario } from "@/lib/context/scenario-context";
@@ -93,24 +90,7 @@ function MainContent({
     }
   };
 
-  // Table view logic
-  let tableIdx: number | null = null;
-  if (currentView && currentView.startsWith("table-")) {
-    const idx = parseInt(currentView.replace("table-", ""), 10);
-    if (!isNaN(idx)) tableIdx = idx;
-  }
-  const table =
-    tableIdx !== null && scenario.tables && scenario.tables[tableIdx];
-
   const renderMainContent = () => {
-    if (table) {
-      return (
-        <div className="lg:col-span-4">
-          <TableView table={table} />
-        </div>
-      );
-    }
-
     return (
       <>
         <div className="lg:col-span-3">
@@ -126,8 +106,6 @@ function MainContent({
                 return <AsciiInteriorView />;
               case "exterior":
                 return <ExteriorView />;
-              case "pcs":
-                return <PCsView />;
               default:
                 return (
                   <div>
@@ -140,8 +118,6 @@ function MainContent({
         <div>
           {currentView === "interior" || currentView === "interior-ascii" ? (
             <InfoPanel />
-          ) : currentView === "pcs" ? (
-            <PCsSidebar />
           ) : (
             <div className="border border-primary h-full flex flex-col">
               <div className="p-2 md:p-4 border-b border-primary">

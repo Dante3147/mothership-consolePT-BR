@@ -3,7 +3,6 @@
 import { useAdmin } from "@/lib/context/admin-context";
 import { useEmergency } from "@/lib/context/emergency-context";
 import { useScenario } from "@/lib/context/scenario-context";
-import { useSimulationTime } from "@/lib/context/simulation-time-context";
 import { useView, ViewType } from "@/lib/context/view-context";
 import {
   AlertTriangle,
@@ -21,6 +20,7 @@ import {
   Tractor,
   Wine,
 } from "lucide-react";
+import { DateTime } from "luxon";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ImageSelector } from "./images/image-selector";
@@ -48,7 +48,7 @@ export function Header() {
   const { currentView, setCurrentView } = useView();
   const router = useRouter();
   const params = useParams();
-  const { currentTime } = useSimulationTime();
+  const currentTime = DateTime.now().plus({ year: 100 });
   const mapId = params.mapId as string;
   const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
 
@@ -76,7 +76,6 @@ export function Header() {
     map ? "interior" : null,
     scenario.asciiMap ? "interior-ascii" : null,
     scenario.showPcView ? "pcs" : null,
-    ...(scenario.tables ? scenario.tables.map((_, idx) => `table-${idx}`) : []),
   ].filter(Boolean) as ViewType[];
 
   return (
@@ -122,27 +121,6 @@ export function Header() {
           </div>
           {availableViews.length > 1 && (
             <div className="flex flex-wrap gap-2 md:gap-4">
-              {/* Table Tabs */}
-              {scenario.tables &&
-                scenario.tables.map((table, idx) => {
-                  const Icon = tableIcons[table.icon ?? "DollarSign"];
-                  return (
-                    <Button
-                      key={table.title}
-                      variant="outline"
-                      onClick={() => handleViewChange(`table-${idx}`)}
-                      className={`text-xs md:text-sm px-2 py-1 h-auto border-primary hover:bg-primary hover:text-black whitespace-nowrap ${
-                        currentView === `table-${idx}`
-                          ? "bg-primary text-black"
-                          : ""
-                      }`}
-                    >
-                      <Icon className="mr-1 h-3 w-3 md:h-4 md:w-4" />
-                      {table.title.toUpperCase()}
-                    </Button>
-                  );
-                })}
-
               {availableViews.includes("interior") && (
                 <Button
                   variant="outline"
@@ -179,18 +157,6 @@ export function Header() {
                 >
                   <Radio className="mr-1 h-3 w-3 md:h-4 md:w-4" />
                   EXTERIOR VIEW
-                </Button>
-              )}
-              {availableViews.includes("pcs") && (
-                <Button
-                  variant="outline"
-                  onClick={() => handleViewChange("pcs")}
-                  className={`text-xs md:text-sm px-2 py-1 h-auto border-primary hover:bg-primary hover:text-black whitespace-nowrap ${
-                    currentView === "pcs" ? "bg-primary text-black" : ""
-                  }`}
-                >
-                  <DollarSign className="mr-1 h-3 w-3 md:h-4 md:w-4" />
-                  CREDITS
                 </Button>
               )}
             </div>

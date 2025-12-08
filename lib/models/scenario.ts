@@ -1,8 +1,5 @@
-import { TableIcon } from "@/components/header";
 import { Theme } from "../context/theme-context";
-import { Credit } from "./credit";
 import { Image } from "./image";
-import { PeriodicPayment } from "./periodic-payment";
 import { bellStation, deepStation } from "./scenarios/deep";
 import { gretaBase } from "./scenarios/greta-base";
 import { prosperosDream } from "./scenarios/prosperos-dream";
@@ -132,18 +129,6 @@ export type DiagnosticsData = {
 
 export type ColumnType = "string" | "currency";
 
-export type Table = {
-  title: string;
-  icon?: TableIcon;
-  description: string;
-  columns: {
-    key: string;
-    label: string;
-    type?: ColumnType; // defaults to "string" if not specified
-  }[];
-  rows: Record<string, Credit | PeriodicPayment | string>[];
-};
-
 export type Scenario = {
   id: string;
   name: string;
@@ -164,7 +149,6 @@ export type Scenario = {
   asciiMap?: string;
   systemLogs?: SystemLog[];
   controlButtons?: ControlButton[];
-  tables?: Table[];
   images?: Image[];
   theme?: Theme;
   showPcView?: boolean;

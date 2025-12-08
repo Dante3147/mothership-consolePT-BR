@@ -6,13 +6,10 @@ import { AudioProvider } from "@/lib/context/audio-context";
 import { DiagnosticsProvider } from "@/lib/context/diagnostics-context";
 import { EmergencyProvider } from "@/lib/context/emergency-context";
 import { MarkerProvider } from "@/lib/context/marker-context";
-import { PlayerProvider } from "@/lib/context/player-context";
 import { PoiProvider } from "@/lib/context/poi-context";
 import { ScenarioProvider } from "@/lib/context/scenario-context";
-import { SimulationTimeProvider } from "@/lib/context/simulation-time-context";
 import { TableSortProvider } from "@/lib/context/table-sort-context";
 import { ThemeProvider } from "@/lib/context/theme-context";
-import { TransactionProvider } from "@/lib/context/transaction-context";
 import { ViewProvider } from "@/lib/context/view-context";
 import { useParams } from "next/navigation";
 
@@ -29,22 +26,16 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
             <DiagnosticsProvider>
               <ViewProvider initialViewType={viewType}>
                 <MarkerProvider>
-                  <SimulationTimeProvider>
-                    <AdminProvider>
-                      <PoiProvider>
-                        <TableSortProvider>
-                          <TransactionProvider>
-                            <PlayerProvider>
-                              <div className="min-h-screen">
-                                {children}
-                                <CommandPalette />
-                              </div>
-                            </PlayerProvider>
-                          </TransactionProvider>
-                        </TableSortProvider>
-                      </PoiProvider>
-                    </AdminProvider>
-                  </SimulationTimeProvider>
+                  <AdminProvider>
+                    <PoiProvider>
+                      <TableSortProvider>
+                        <div className="min-h-screen">
+                          {children}
+                          <CommandPalette />
+                        </div>
+                      </TableSortProvider>
+                    </PoiProvider>
+                  </AdminProvider>
                 </MarkerProvider>
               </ViewProvider>
             </DiagnosticsProvider>
