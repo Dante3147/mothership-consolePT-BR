@@ -1,4 +1,4 @@
-import { Scenario, StationMap } from "../scenario";
+import { Scenario, StationMap } from "../../models/scenario";
 
 export const gretaBase = (): Scenario => {
   const map = new StationMap({

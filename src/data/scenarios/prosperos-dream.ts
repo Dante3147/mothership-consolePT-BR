@@ -1,4 +1,4 @@
-import { POI_ID, Scenario } from "../scenario";
+import { POI_ID, Scenario } from "../../models/scenario";
 
 export const prosperosDream = (): Scenario => {
   const scenario: Scenario = {

@@ -1,9 +1,9 @@
 import { Theme } from "../context/theme-context";
-import { bellStation, deepStation } from "./scenarios/deep";
-import { gretaBase } from "./scenarios/greta-base";
-import { prosperosDream } from "./scenarios/prosperos-dream";
-import { warped } from "./scenarios/warped";
-import { ypsilon14, ypsilon14WithTunnels } from "./scenarios/ypsilon-14";
+import { bellStation, deepStation } from "../data/scenarios/deep";
+import { gretaBase } from "../data/scenarios/greta-base";
+import { prosperosDream } from "../data/scenarios/prosperos-dream";
+import { warped } from "../data/scenarios/warped";
+import { ypsilon14, ypsilon14WithTunnels } from "../data/scenarios/ypsilon-14";
 
 export type RoomId = string;
 export type RoomType = "room" | "airlock" | "hallway";

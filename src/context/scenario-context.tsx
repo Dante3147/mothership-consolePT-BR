@@ -14,7 +14,7 @@ import {
   useState,
 } from "react";
 
-import { ypsilon14 } from "../models/scenarios/ypsilon-14";
+import { ypsilon14 } from "../data/scenarios/ypsilon-14";
 import { useTheme } from "./theme-context";
 
 export type AirlockState = {

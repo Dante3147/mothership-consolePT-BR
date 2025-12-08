@@ -1,4 +1,4 @@
-import { Scenario, StationMap } from "../scenario";
+import { Scenario, StationMap } from "../../models/scenario";
 
 // Scenario definitions
 export const ypsilon14 = (): Scenario => {
