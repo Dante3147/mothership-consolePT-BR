@@ -33,6 +33,12 @@ export function CommandPalette() {
   const currentViewType = params.viewType as string;
   const scenarioId = params.scenario as string;
 
+  // Determine which views are actually supported for the current scenario
+  const hasExteriorView =
+    Array.isArray(scenario.exteriorStats) && scenario.exteriorStats.length > 0;
+  const hasInteriorView = !!scenario.map;
+  const hasAsciiInteriorView = !!scenario.asciiMap;
+
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "p" && (e.metaKey || e.ctrlKey)) {
@@ -61,36 +67,42 @@ export function CommandPalette() {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Navigation">
-            <CommandItem
-              onSelect={() =>
-                runCommand(() => {
-                  setCurrentView("exterior");
-                  router.push(`/${scenarioId}/exterior`);
-                })
-              }
-            >
-              Navigation: Exterior
-            </CommandItem>
-            <CommandItem
-              onSelect={() =>
-                runCommand(() => {
-                  setCurrentView("interior");
-                  router.push(`/${scenarioId}/interior`);
-                })
-              }
-            >
-              Navigation: Interior
-            </CommandItem>
-            <CommandItem
-              onSelect={() =>
-                runCommand(() => {
-                  setCurrentView("interior-ascii");
-                  router.push(`/${scenarioId}/interior-ascii`);
-                })
-              }
-            >
-              Navigation: ASCII Interior
-            </CommandItem>
+            {hasExteriorView && (
+              <CommandItem
+                onSelect={() =>
+                  runCommand(() => {
+                    setCurrentView("exterior");
+                    router.push(`/${scenarioId}/exterior`);
+                  })
+                }
+              >
+                Navigation: Exterior
+              </CommandItem>
+            )}
+            {hasInteriorView && (
+              <CommandItem
+                onSelect={() =>
+                  runCommand(() => {
+                    setCurrentView("interior");
+                    router.push(`/${scenarioId}/interior`);
+                  })
+                }
+              >
+                Navigation: Interior
+              </CommandItem>
+            )}
+            {hasAsciiInteriorView && (
+              <CommandItem
+                onSelect={() =>
+                  runCommand(() => {
+                    setCurrentView("interior-ascii");
+                    router.push(`/${scenarioId}/interior-ascii`);
+                  })
+                }
+              >
+                Navigation: ASCII Interior
+              </CommandItem>
+            )}
           </CommandGroup>
 
           <CommandGroup heading="Scenarios">
