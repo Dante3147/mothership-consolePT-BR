@@ -109,7 +109,15 @@ export function WardenMenu({
           ))}
         </div>
 
-        <div className="mt-4 flex justify-end">
+        <div className="mt-8 flex items-center justify-between">
+          <a
+            href="https://github.com/Fasust/mothership-console?tab=readme-ov-file#%EF%B8%8F-features"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1 md:px-4 md:py-2 border border-primary hover:bg-primary/20 rounded"
+          >
+            INSTRUCTIONS
+          </a>
           <button
             onClick={() => setShowWardenMenu(false)}
             className="px-3 py-1 md:px-4 md:py-2 border border-primary hover:bg-primary/20 rounded"
