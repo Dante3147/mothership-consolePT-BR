@@ -32,6 +32,7 @@
     "three": "0.175.0"
   },
   "devDependencies": {
+    "@types/three": "0.175.0",
     "@types/luxon": "^3.6.2",
     "@types/node": "^22",
     "@types/react": "^19",
