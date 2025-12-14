@@ -1,6 +1,7 @@
 "use client";
 
 import { CommandPalette } from "@/src/components/command_palette/command-palette";
+import { DevMenu } from "@/src/components/dev-menu";
 import { AdminProvider } from "@/src/context/admin-context";
 import { AudioProvider } from "@/src/context/audio-context";
 import { DiagnosticsProvider } from "@/src/context/diagnostics-context";
@@ -37,6 +38,7 @@ export function ProviderRegistry({ children }: { children: React.ReactNode }) {
                         <div className="min-h-screen">
                           {children}
                           <CommandPalette />
+                          <DevMenu />
                         </div>
                       </TableSortProvider>
                     </PoiProvider>

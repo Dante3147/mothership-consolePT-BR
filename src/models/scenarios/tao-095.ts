@@ -39,7 +39,7 @@ export const tao095 = (): Scenario => {
     ],
     connections: [
       { from: "HANGAR_PRINCIPAL", to: "AIRLOCK_NORTE", password: "HORUS-7" },
-      { from: "HANGAR_SECUNDARIO", to: "AIRLOCK_SUL", defaultOpen: true },
+      { from: "HANGAR_SECUNDARIO", to: "AIRLOCK_SUL", password: "HORUS-7" },
       { from: "AIRLOCK_NORTE", to: "CORREDOR_PRINCIPAL" },
       { from: "AIRLOCK_SUL", to: "CORREDOR_PRINCIPAL" },
       { from: "CORREDOR_PRINCIPAL", to: "COMANDO" },
@@ -456,11 +456,11 @@ export const tao095 = (): Scenario => {
         linkedRoom: "HANGAR_PRINCIPAL",
       },
       {
-        label: "PURGA EMERGENCIAL",
+        label: "AUTODESTRUIÇÃO",
         defaultState: false,
         restricted: true,
         type: "action",
-        function: "emergency",
+        function: "self-destruct",
       },
       {
         label: "DADOS-ESTAÇÃO",

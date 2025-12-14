@@ -194,8 +194,12 @@ export function StationGraphMap() {
             y={roomHeight * 0.75}
             width={roomWidth * 0.8}
             height={roomHeight * 0.2}
+            style={{ pointerEvents: 'all' }}
           >
-            <div className="flex justify-center items-center h-full">
+            <div 
+              className="flex justify-center items-center h-full"
+              onClick={(e) => e.stopPropagation()}
+            >
               <DecryptionKeyButton />
             </div>
           </foreignObject>

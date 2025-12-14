@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { HORUS_SECRET_MESSAGES } from "@/src/data/horus-secret-log";
 
 interface EncryptedMessage {
   id: string;
@@ -14,6 +15,7 @@ interface EncryptionContextType {
   addMessage: (content: string) => void;
   decryptionKey: string;
   generateKey: () => void;
+  initializeKeyForDiagnostics: () => void;
   decryptMessages: (key: string) => boolean;
   isDecrypted: boolean;
   showEncryptedModal: boolean;
@@ -22,6 +24,7 @@ interface EncryptionContextType {
   keyFound: boolean;
   copyKeyToClipboard: () => void;
   randomRoom: string;
+  diagnosticsExecuted: boolean;
   onDecryptSuccess?: () => void;
   setOnDecryptSuccess: (callback: (() => void) | undefined) => void;
 }
@@ -97,6 +100,7 @@ export function EncryptionProvider({
   const [keyCopied, setKeyCopied] = useState(false);
   const [keyFound, setKeyFound] = useState(false);
   const [randomRoom, setRandomRoom] = useState<string>("");
+  const [diagnosticsExecuted, setDiagnosticsExecuted] = useState(false);
   const [onDecryptSuccess, setOnDecryptSuccess] = useState<(() => void) | undefined>(undefined);
 
   // Lista de salas possíveis para esconder a chave
@@ -111,18 +115,38 @@ export function EncryptionProvider({
     "SUBTERRANEO",
   ];
 
-  // Gerar chave e sala aleatória na inicialização
-  useEffect(() => {
+  // Função para inicializar a chave quando o jogador fecha o terminal
+  const initializeKeyForDiagnostics = () => {
+    // Só gerar se ainda não foi executado
+    if (diagnosticsExecuted) return;
+    
     const key = generateRandomKey();
     setDecryptionKey(key);
     
     const room = possibleRooms[Math.floor(Math.random() * possibleRooms.length)];
     setRandomRoom(room);
     
+    setDiagnosticsExecuted(true);
+    
+    // Criar mensagens criptografadas secretas usando o arquivo HORUS-SECRET-LOG
+    const newMessages = HORUS_SECRET_MESSAGES.map((msg, index) => {
+      const formattedContent = `[${msg.sender}] ${msg.content}`;
+      const encrypted = encryptContent(formattedContent);
+      return {
+        id: msg.id,
+        timestamp: new Date(Date.now() + index * 1000).toISOString(),
+        encryptedContent: encrypted,
+      };
+    });
+
+    setMessages(newMessages);
+    localStorage.setItem("horus_encrypted_messages", JSON.stringify(newMessages));
+    
     // Salvar no localStorage para persistência
     localStorage.setItem("horus_decryption_key", key);
     localStorage.setItem("horus_key_room", room);
-  }, []);
+    localStorage.setItem("horus_diagnostics_executed", "true");
+  };
 
   const addMessage = (content: string) => {
     const encrypted = encryptContent(content);
@@ -147,12 +171,20 @@ export function EncryptionProvider({
   };
 
   const decryptMessages = (key: string): boolean => {
+    console.log("🔑 Tentando descriptografar...");
+    console.log("Chave inserida:", key.toUpperCase().replace(/\s/g, ""));
+    console.log("Chave esperada:", decryptionKey);
+    
     if (key.toUpperCase().replace(/\s/g, "") === decryptionKey) {
+      console.log("✅ Chave correta! Descriptografando...");
+      
       // Descriptografar todas as mensagens
       const decryptedMsgs = messages.map((msg) => ({
         ...msg,
         decryptedContent: decryptContent(msg.encryptedContent),
       }));
+      
+      console.log("Mensagens descriptografadas:", decryptedMsgs);
       
       setMessages(decryptedMsgs);
       setIsDecrypted(true);
@@ -160,18 +192,24 @@ export function EncryptionProvider({
       
       // Fechar modal após um pequeno delay
       setTimeout(() => {
+        console.log("Fechando modal...");
         setShowEncryptedModal(false);
       }, 500);
       
       // Chamar callback de sucesso se existir
       if (onDecryptSuccess) {
+        console.log("Callback existe! Chamando em 600ms...");
         setTimeout(() => {
+          console.log("Executando callback onDecryptSuccess...");
           onDecryptSuccess();
         }, 600);
+      } else {
+        console.warn("⚠️ Callback onDecryptSuccess NÃO existe!");
       }
       
       return true;
     }
+    console.log("❌ Chave incorreta!");
     return false;
   };
 
@@ -195,6 +233,7 @@ export function EncryptionProvider({
     const isAlreadyDecrypted = localStorage.getItem("horus_decrypted");
     const isKeyFound = localStorage.getItem("horus_key_found");
     const isKeyCopied = localStorage.getItem("horus_key_copied");
+    const wasDiagnosticsExecuted = localStorage.getItem("horus_diagnostics_executed");
 
     if (savedMessages) {
       setMessages(JSON.parse(savedMessages));
@@ -214,6 +253,9 @@ export function EncryptionProvider({
     if (isKeyCopied === "true") {
       setKeyCopied(true);
     }
+    if (wasDiagnosticsExecuted === "true") {
+      setDiagnosticsExecuted(true);
+    }
   }, []);
 
   return (
@@ -223,6 +265,7 @@ export function EncryptionProvider({
         addMessage,
         decryptionKey,
         generateKey,
+        initializeKeyForDiagnostics,
         decryptMessages,
         isDecrypted,
         showEncryptedModal,
@@ -231,6 +274,7 @@ export function EncryptionProvider({
         keyFound,
         copyKeyToClipboard,
         randomRoom,
+        diagnosticsExecuted,
         onDecryptSuccess,
         setOnDecryptSuccess,
       }}

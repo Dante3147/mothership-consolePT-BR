@@ -4,8 +4,13 @@ import { useEncryption } from "@/src/context/encryption-context";
 import { useState } from "react";
 
 export function DecryptionKeyButton() {
-  const { copyKeyToClipboard, keyCopied } = useEncryption();
+  const { copyKeyToClipboard, keyCopied, diagnosticsExecuted, decryptionKey } = useEncryption();
   const [showButton, setShowButton] = useState(false);
+  
+  // Não renderizar NADA se o diagnóstico não foi executado ou se não há chave gerada
+  if (!diagnosticsExecuted || !decryptionKey) {
+    return null;
+  }
 
   return (
     <div 

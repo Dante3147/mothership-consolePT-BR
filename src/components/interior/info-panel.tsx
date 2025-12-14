@@ -6,6 +6,7 @@ import { Activity, Terminal, Wrench } from "lucide-react";
 import { AdminLoginModal } from "../admin-login-modal";
 import { InteriorCharts } from "./interior-charts";
 import { StationControls } from "./station-controls";
+import { useState, useEffect } from "react";
 
 /**
  * Renders a panel of information about the station.
@@ -15,6 +16,15 @@ import { StationControls } from "./station-controls";
 export function InfoPanel() {
   const { scenario } = useScenario();
   const { isLoginVisible } = useAdmin();
+  const [animationDelay, setAnimationDelay] = useState("0s");
+
+  // Calcular animationDelay apenas no cliente para evitar hydration error
+  useEffect(() => {
+    if (scenario?.systemLogs) {
+      const delay = Math.min(scenario.systemLogs.length || 0, 10) * 0.05 + 0.1;
+      setAnimationDelay(`${delay}s`);
+    }
+  }, [scenario?.systemLogs]);
 
   return (
     <div className="border border-primary h-full flex flex-col">
@@ -51,7 +61,7 @@ export function InfoPanel() {
                 <span>{log.message}</span>
               </div>
             ))}
-            <div className="flex gap-2 log-entry" style={{ animationDelay: `${Math.min(scenario?.systemLogs?.length || 0, 10) * 0.05 + 0.1}s` }}>
+            <div className="flex gap-2 log-entry" style={{ animationDelay }}>
               <span className="text-primary/50">SISTEMA&gt;</span>
               <span className="terminal-cursor"></span>
             </div>

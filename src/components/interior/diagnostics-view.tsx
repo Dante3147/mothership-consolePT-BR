@@ -6,7 +6,9 @@ import { useScenario } from "@/src/context/scenario-context";
 import { useEncryption } from "@/src/context/encryption-context";
 import type { DiagnosticMessage } from "@/src/models/station-graph-map";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/button";
+import { HORUS_SECRET_MESSAGES, formatSecretMessagesForDownload } from "@/src/data/horus-secret-log";
 
 /**
  * Renders a view of the diagnostics of the station.
@@ -14,10 +16,11 @@ import { Button } from "@/src/components/button";
  * Uses the scenario.map.diagnostics property to display the diagnostics.
  */
 export function DiagnosticsView() {
+  const router = useRouter();
   const { map, scenario } = useScenario();
   const { emergency } = useEmergency();
-  const { hideDiagnostics } = useDiagnostics();
-  const { addMessage, setShowEncryptedModal, messages, setOnDecryptSuccess, isDecrypted } = useEncryption();
+  const { hideDiagnostics, diagnosticsVisible, showDiagnostics } = useDiagnostics();
+  const { addMessage, setShowEncryptedModal, messages, setOnDecryptSuccess, isDecrypted, initializeKeyForDiagnostics } = useEncryption();
   const diagnostics = map?.diagnostics;
   const isHorus = scenario?.id === "TAO-095";
   const [visibleMessages, setVisibleMessages] = useState<DiagnosticMessage[]>(
@@ -98,7 +101,7 @@ export function DiagnosticsView() {
           (prev) => prev + currentMessage.message[currentCharIndex]
         );
         setCurrentCharIndex((prev) => prev + 1);
-      }, 0.1);
+      }, 1);
 
       return () => clearTimeout(timer);
     } else {
@@ -121,49 +124,102 @@ export function DiagnosticsView() {
   useEffect(() => {
     if (isHorus) {
       setOnDecryptSuccess(() => () => {
-        // Mostrar mensagem de sucesso
-        alert("✓ DESCRIPTOGRAFIA CONCLUÍDA COM SUCESSO\n\nTodas as conversas criptografadas foram liberadas!");
+        console.log("🔓 Descriptografia concluída! Abrindo console...");
+        console.log("Console visível?", diagnosticsVisible);
+        console.log("Mensagens:", messages);
         
-        // Opcional: Adicionar mensagens descriptografadas ao console
-        const decryptedMsgs: DiagnosticMessage[] = [
-          {
-            type: "summary" as const,
-            message: "\n\n╔════════════════════════════════════════════╗",
-          },
-          {
-            type: "notice" as const,
-            message: "║ DESCRIPTOGRAFIA CONCLUÍDA COM SUCESSO ║",
-          },
-          {
-            type: "summary" as const,
-            message: "╚════════════════════════════════════════════╝\n",
-          },
-        ];
-
-        // Adicionar cada mensagem descriptografada
-        messages.forEach((msg, index) => {
-          if (msg.decryptedContent) {
-            decryptedMsgs.push({
+        // SEMPRE fechar e reabrir o console para garantir que as mensagens apareçam
+        if (diagnosticsVisible) {
+          console.log("Fechando console primeiro...");
+          hideDiagnostics();
+        }
+        
+        // Abrir console após um pequeno delay
+        setTimeout(() => {
+          console.log("Abrindo console com mensagens descriptografadas...");
+          showDiagnostics();
+          
+          // Adicionar mensagens descriptografadas ao console
+          setTimeout(() => {
+            console.log("Adicionando mensagens descriptografadas ao console...");
+            const decryptedMsgs: DiagnosticMessage[] = [
+            {
               type: "summary" as const,
-              message: `\n━━━ TRANSMISSÃO #${index + 1} ━━━`,
-            });
-            decryptedMsgs.push({
+              message: "\n\n" + "═".repeat(70),
+            },
+            {
+              type: "summary" as const,
+              message: "║" + " ".repeat(68) + "║",
+            },
+            {
+              type: "summary" as const,
+              message: "║" + " ".repeat(10) + "MENSAGENS DESCRIPTOGRAFADAS COM SUCESSO" + " ".repeat(19) + "║",
+            },
+            {
+              type: "summary" as const,
+              message: "║" + " ".repeat(68) + "║",
+            },
+            {
+              type: "summary" as const,
+              message: "═".repeat(70) + "\n",
+            },
+            {
               type: "notice" as const,
-              message: msg.decryptedContent,
-            });
-          }
-        });
+              message: "NÍVEL DE CLASSIFICAÇÃO: OMEGA-ULTRA SECRETO",
+            },
+            {
+              type: "notice" as const,
+              message: "ACESSO AUTORIZADO: BASE HORUS // TAO-095",
+            },
+            {
+              type: "notice" as const,
+              message: "TOTAL DE TRANSMISSÕES: " + messages.length + "\n",
+            },
+          ];
 
-        decryptedMsgs.push({
-          type: "summary" as const,
-          message: "\n" + "═".repeat(60) + "\n",
-        });
+          // Adicionar cada mensagem descriptografada
+          messages.forEach((msg, index) => {
+            if (msg.decryptedContent) {
+              decryptedMsgs.push({
+                type: "summary" as const,
+                message: `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+              });
+              decryptedMsgs.push({
+                type: "notice" as const,
+                message: `[TRANSMISSÃO #${index + 1}] - ${new Date(msg.timestamp).toLocaleString("pt-BR")}`,
+              });
+              decryptedMsgs.push({
+                type: "summary" as const,
+                message: `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`,
+              });
+              decryptedMsgs.push({
+                type: "notice" as const,
+                message: msg.decryptedContent,
+              });
+            }
+          });
 
-        // Adicionar ao console existente
-        setVisibleMessages((prev) => [...prev, ...decryptedMsgs]);
+          decryptedMsgs.push({
+            type: "summary" as const,
+            message: "\n" + "═".repeat(60),
+          });
+          decryptedMsgs.push({
+            type: "notice" as const,
+            message: "\n✓ TODAS AS TRANSMISSÕES FORAM PROCESSADAS E LIBERADAS\n",
+          });
+          decryptedMsgs.push({
+            type: "summary" as const,
+            message: "═".repeat(60) + "\n",
+          });
+
+          // SUBSTITUIR as mensagens antigas pelas novas (mensagens descriptografadas)
+          setVisibleMessages(decryptedMsgs);
+          console.log("✅ Mensagens adicionadas ao console!");
+        }, 300);
+        }, 100);
       });
     }
-  }, [isHorus, messages, setOnDecryptSuccess]);
+  }, [isHorus, messages, setOnDecryptSuccess, diagnosticsVisible, showDiagnostics, hideDiagnostics]);
 
   // Handle keyboard input to close when complete
   useEffect(() => {
@@ -178,10 +234,10 @@ export function DiagnosticsView() {
   }, []);
 
   // Generate report file
-  const generateReport = () => {
+  const generateReport = async () => {
     if (!diagnostics || !map) return;
 
-    // Build report content
+    // Build report content (log normal)
     let reportContent = `${diagnostics.title.toUpperCase()}\n`;
     reportContent += `${"=".repeat(50)}\n\n`;
 
@@ -200,7 +256,7 @@ export function DiagnosticsView() {
       reportContent += `${i + 1}. ${sequence.toUpperCase()}\n`;
     }
 
-    // Create and download file
+    // Download log normal
     const blob = new Blob([reportContent], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -210,6 +266,137 @@ export function DiagnosticsView() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+
+    // Se houver mensagens criptografadas no HORUS
+    if (isHorus && messages.length > 0) {
+      if (isDecrypted) {
+        // ARQUIVO 1: HORUS-SECRET.txt - Conversas ultra secretas formatadas (TODAS as 30 mensagens)
+        const secretLogContent = formatSecretMessagesForDownload(
+          HORUS_SECRET_MESSAGES.map((msg, index) => ({
+            ...msg,
+            timestamp: new Date(Date.now() + index * 3600000).toISOString() // 1 hora entre cada mensagem
+          }))
+        );
+
+        const secretBlob = new Blob([secretLogContent], { type: "text/plain; charset=utf-8" });
+        const secretUrl = URL.createObjectURL(secretBlob);
+        const secretLink = document.createElement("a");
+        secretLink.href = secretUrl;
+        secretLink.download = `HORUS-SECRET.txt`;
+        document.body.appendChild(secretLink);
+        secretLink.click();
+        document.body.removeChild(secretLink);
+        URL.revokeObjectURL(secretUrl);
+
+        // ARQUIVO 2: Relatório sobre luas e base
+        let relatorioLuasContent = "═══════════════════════════════════════════════════════════════\n";
+        relatorioLuasContent += "           RELATÓRIO DE ANÁLISE - SISTEMA TAO-095\n";
+        relatorioLuasContent += "═══════════════════════════════════════════════════════════════\n\n";
+        relatorioLuasContent += "BASE: " + (scenario?.name || "HORUS") + "\n";
+        relatorioLuasContent += "TIPO: " + (scenario?.type || "Base Científica/Militar") + "\n";
+        relatorioLuasContent += "LOCALIZAÇÃO: Planeta TAO-095 (Classe-M)\n\n";
+        relatorioLuasContent += "═══════════════════════════════════════════════════════════════\n\n";
+        relatorioLuasContent += "ANÁLISE DAS LUAS DO SISTEMA:\n\n";
+        relatorioLuasContent += "O sistema TAO-095 possui 7 luas em órbita, nomeadas após\n";
+        relatorioLuasContent += "deidades egípcias:\n\n";
+        relatorioLuasContent += "1. OSIRIS - Lua principal, órbita estável\n";
+        relatorioLuasContent += "2. ISIS - Composição rica em minérios raros\n";
+        relatorioLuasContent += "3. SETH - Atividade sísmica anômala detectada\n";
+        relatorioLuasContent += "4. NEPHTHYS - Atmosfera rarefeita, sem anomalias\n";
+        relatorioLuasContent += "5. ANUBIS - Presença de estruturas não identificadas\n";
+        relatorioLuasContent += "6. SEKHMET - ⚠ ALERTA: Padrões de energia inexplicáveis\n";
+        relatorioLuasContent += "7. BASTET - Menor lua, órbita irregular\n\n";
+        relatorioLuasContent += "═══════════════════════════════════════════════════════════════\n\n";
+        relatorioLuasContent += "DADOS DO DIAGNÓSTICO DA BASE:\n\n";
+        relatorioLuasContent += reportContent;
+        relatorioLuasContent += "\n\n═══════════════════════════════════════════════════════════════\n";
+        relatorioLuasContent += "                    FIM DO RELATÓRIO\n";
+        relatorioLuasContent += "═══════════════════════════════════════════════════════════════\n";
+
+        const luasBlob = new Blob([relatorioLuasContent], { type: "text/plain; charset=utf-8" });
+        const luasUrl = URL.createObjectURL(luasBlob);
+        const luasLink = document.createElement("a");
+        luasLink.href = luasUrl;
+        luasLink.download = `RELATORIO_LUAS_BASE_${Date.now()}.txt`;
+        document.body.appendChild(luasLink);
+        luasLink.click();
+        document.body.removeChild(luasLink);
+        URL.revokeObjectURL(luasUrl);
+      } else {
+        // Se NÃO descriptografado, cria arquivos criptografados
+        await downloadEncryptedZip();
+      }
+    }
+  };
+
+  // Função para criar e baixar ZIP protegido por senha
+  const downloadEncryptedZip = async () => {
+    // Gerar senha fragmentada
+    const passwordFragments = [
+      Math.random().toString(36).substring(2, 6).toUpperCase(),
+      Math.random().toString(36).substring(2, 6).toUpperCase(),
+      Math.random().toString(36).substring(2, 6).toUpperCase(),
+      Math.random().toString(36).substring(2, 6).toUpperCase(),
+    ];
+    const password = passwordFragments.join("-");
+
+    // Criar conteúdo do arquivo de senha fragmentado
+    let passwordFileContent = "CHAVE DE ACESSO - FRAGMENTOS\n";
+    passwordFileContent += "=".repeat(50) + "\n\n";
+    passwordFileContent += "Para desbloquear o arquivo DADOS_CRIPTOGRAFADOS.zip,\n";
+    passwordFileContent += "combine os fragmentos abaixo na ordem correta:\n\n";
+    passwordFragments.forEach((frag, i) => {
+      passwordFileContent += `FRAGMENTO ${i + 1}: ${frag}\n`;
+    });
+    passwordFileContent += "\nFormato: XXXX-XXXX-XXXX-XXXX\n";
+
+    // Criar conteúdo criptografado
+    let encryptedContent = "DADOS CRIPTOGRAFADOS - ACESSO RESTRITO\n";
+    encryptedContent += "=".repeat(60) + "\n\n";
+    encryptedContent += "⚠ AVISO: Conteúdo protegido por criptografia de nível HORUS-OMEGA\n\n";
+    
+    messages.forEach((msg, index) => {
+      encryptedContent += `[TRANSMISSÃO #${index + 1}]\n`;
+      encryptedContent += `Timestamp: ${new Date(msg.timestamp).toLocaleString("pt-BR")}\n`;
+      encryptedContent += `Dados: ${msg.encryptedContent}\n`;
+      encryptedContent += "-".repeat(60) + "\n\n";
+    });
+    encryptedContent += `\nSenha de acesso necessária: ${password}\n`;
+    encryptedContent += "Consulte o arquivo CHAVE_FRAGMENTADA.txt\n";
+
+    // Download arquivo de senha fragmentada
+    const passBlob = new Blob([passwordFileContent], { type: "text/plain" });
+    const passUrl = URL.createObjectURL(passBlob);
+    const passLink = document.createElement("a");
+    passLink.href = passUrl;
+    passLink.download = `CHAVE_FRAGMENTADA_${Date.now()}.txt`;
+    document.body.appendChild(passLink);
+    passLink.click();
+    document.body.removeChild(passLink);
+    URL.revokeObjectURL(passUrl);
+
+    // Download arquivo criptografado (simulando ZIP)
+    // Nota: Navegadores não podem criar ZIPs reais com senha nativamente
+    // Este arquivo simula um ZIP mostrando que precisa de senha
+    const encBlob = new Blob([encryptedContent], { type: "text/plain" });
+    const encUrl = URL.createObjectURL(encBlob);
+    const encLink = document.createElement("a");
+    encLink.href = encUrl;
+    encLink.download = `DADOS_CRIPTOGRAFADOS_${Date.now()}.txt`;
+    document.body.appendChild(encLink);
+    encLink.click();
+    document.body.removeChild(encLink);
+    URL.revokeObjectURL(encUrl);
+
+    // Mostrar alerta informando sobre os downloads
+    alert(
+      "📁 ARQUIVOS BAIXADOS:\n\n" +
+      "1. relatorio_diagnostico.txt - Log de diagnóstico\n" +
+      "2. DADOS_CRIPTOGRAFADOS.txt - Dados protegidos\n" +
+      "3. CHAVE_FRAGMENTADA.txt - Senha de acesso\n\n" +
+      "⚠ Os dados criptografados requerem senha.\n" +
+      "Consulte CHAVE_FRAGMENTADA.txt para obter a senha."
+    );
   };
 
   // Render a message based on its type
@@ -242,6 +429,11 @@ export function DiagnosticsView() {
   const handleCloseTerminal = () => {
     setIsClosing(true);
     
+    // GERAR A CHAVE AGORA, quando o jogador fecha o terminal após executar diagnóstico
+    if (isHorus) {
+      initializeKeyForDiagnostics();
+    }
+    
     // Adicionar mensagem de encerramento
     setVisibleMessages((prev) => [
       ...prev,
@@ -254,10 +446,10 @@ export function DiagnosticsView() {
     // Aguardar 1.5 segundos antes de fechar e redirecionar
     setTimeout(() => {
       hideDiagnostics();
-      // Mudar para a view do mapa (interior-ascii)
-      if (scenario?.id) {
-        window.location.href = `/${scenario.id}/interior-ascii`;
-      }
+      // Mudar para a view do mapa (interior-ascii) usando o ID correto do cenário
+      const scenarioId = scenario?.id || "TAO-095";
+      console.log("Redirecionando para:", `/${scenarioId}/interior-ascii`);
+      router.push(`/${scenarioId}/interior-ascii`);
     }, 1500);
   };
 
