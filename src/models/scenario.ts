@@ -12,6 +12,7 @@ import { helios } from "./scenarios/helios";
 import { nexus } from "./scenarios/nexus";
 import { omega } from "./scenarios/omega";
 import { tao095 } from "./scenarios/tao-095";
+import { smithShimanoC } from "./scenarios/smith-shimano-c";
 import { RoomId, StationGraphMap } from "./station-graph-map";
 
 /**
@@ -24,7 +25,7 @@ export type Scenario = {
   id: string;
   name: string;
   /** Controls the style of the exterior view */
-  type: "asteroid" | "planet" | "bell" | "deep" | "prosperos" | "ship";
+  type: "asteroid" | "planet" | "bell" | "deep" | "prosperos" | "ship" | "smith-shimano";
   /** Dispayed in the header */
   crew: {
     current: number;
@@ -77,6 +78,7 @@ export const allScenarios = [
   nexus(),
   omega(),
   tao095(),
+  smithShimanoC(),
 ];
 
 export type SystemLog = {

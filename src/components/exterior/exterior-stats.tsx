@@ -303,13 +303,17 @@ export function ExteriorStats() {
     if (!scenario.pointsOfInterest || scenario.pointsOfInterest.length === 0)
       return null;
 
+    const selectedPoiData = scenario.pointsOfInterest.find(
+      (poi) => poi.id === selectedPOI
+    );
+
     return (
       <div>
         <div className="flex items-center gap-2 mb-2">
           <MapPin className="h-4 w-4 text-primary" />
-          <h3 className="font-bold">SECTORS</h3>
+          <h3 className="font-bold">SETORES</h3>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2 mb-3">
           {scenario.pointsOfInterest.map((poi) => (
             <ToggleButton
               key={poi.id}
@@ -317,12 +321,36 @@ export function ExteriorStats() {
               isActive={selectedPOI === poi.id}
               onClick={() => handlePoiSelect(poi.id)}
             >
-              <div className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center text-l justify-center">
+              <div className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center text-sm justify-center font-bold border border-primary rounded">
                 {poi.user_facing_id}
               </div>
             </ToggleButton>
           ))}
         </div>
+
+        {/* Selected POI Information Panel */}
+        {selectedPoiData && (
+          <div className="border border-primary p-3 bg-black animate-in fade-in duration-200">
+            <div className="flex items-start gap-2 mb-2">
+              <div className="w-8 h-8 flex items-center justify-center border-2 border-primary text-primary font-bold text-lg rounded flex-shrink-0">
+                {selectedPoiData.user_facing_id}
+              </div>
+              <div className="flex-1">
+                <h4 className="font-bold text-primary text-sm mb-1">
+                  {selectedPoiData.name.toUpperCase()}
+                </h4>
+                <p className="text-primary/80 text-xs leading-relaxed">
+                  {selectedPoiData.description}
+                </p>
+              </div>
+            </div>
+            <div className="border-t border-primary/30 mt-2 pt-2">
+              <div className="text-[10px] text-primary/60 font-mono">
+                <span className="text-primary">SETOR ID:</span> {selectedPoiData.id}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -439,15 +467,16 @@ function ToggleButton({
   onClick: () => void;
 }) {
   return (
-    <Button
-      variant="outline"
+    <button
       onClick={onClick}
-      className={`text-m w-full px-2 py-1 h-10 border-primary hover:bg-primary hover:text-black relative ${
-        isActive ? "bg-primary text-black" : ""
+      className={`text-[10px] w-full px-2 py-2 h-auto min-h-[40px] border transition-all duration-150 relative font-mono text-left ${
+        isActive
+          ? "bg-primary text-black border-primary shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]"
+          : "bg-black text-primary border-primary hover:bg-primary/10 hover:shadow-[0_0_8px_rgba(var(--primary-rgb),0.3)]"
       }`}
     >
       {children}
-      {label}
-    </Button>
+      <span className="pl-8">{label}</span>
+    </button>
   );
 }

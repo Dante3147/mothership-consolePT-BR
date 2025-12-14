@@ -19,7 +19,8 @@ export type ChartType =
   | "radiation"
   | "power"
   | "humidity"
-  | "pressure";
+  | "pressure"
+  | "rare-earth";
 
 export type ExteriorStatType =
   | "composition"

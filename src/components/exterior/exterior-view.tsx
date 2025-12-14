@@ -35,6 +35,8 @@ export function ExteriorView({
     return <ProsperosDreamView viewAngle={viewAngle} />;
   } else if (scenario.type === "ship") {
     return <ShipView />;
+  } else if (scenario.type === "smith-shimano") {
+    return <PlanetView />;
   }
 
   // Fallback for other types

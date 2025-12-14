@@ -79,8 +79,8 @@ export function Header() {
               <AlertTriangle className="h-4 w-4" />
               <span className="text-sm md:text-2xl">
                 {emergency.reason === "self-destruct"
-                  ? "SELF-DESTRUCT ACTIVE"
-                  : "EMERGENCY PROTOCOL"}
+                  ? "AUTODESTRUIÇÃO ATIVA"
+                  : "PROTOCOLO DE EMERGÊNCIA"}
               </span>
             </div>
           )}

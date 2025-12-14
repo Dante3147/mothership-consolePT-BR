@@ -22,6 +22,7 @@ export function InteriorCharts({
     power: Array(30).fill(85),
     humidity: Array(30).fill(45),
     pressure: Array(30).fill(101),
+    "rare-earth": Array(30).fill(87),
   });
 
   // Initialize with random data and update every second
@@ -46,6 +47,9 @@ export function InteriorCharts({
       pressure: Array(30)
         .fill(0)
         .map(() => 100 + Math.random() * 2),
+      "rare-earth": Array(30)
+        .fill(0)
+        .map(() => 84 + Math.random() * 6),
     });
 
     const interval = setInterval(() => {
@@ -86,6 +90,12 @@ export function InteriorCharts({
         if (chartTypes.includes("pressure")) {
           const newValue = 101 + (Math.random() * 0.6 - 0.3); // 100.7-101.3 kPa range
           newData.pressure = [...prev.pressure.slice(1), newValue];
+        }
+
+        // Update rare-earth data - fluctuate around 87% (high concentration)
+        if (chartTypes.includes("rare-earth")) {
+          const newValue = 87 + (Math.random() * 5 - 2.5); // 84.5-89.5% range
+          newData["rare-earth"] = [...prev["rare-earth"].slice(1), newValue];
         }
 
         return newData;
@@ -161,6 +171,16 @@ export function InteriorCharts({
       labels: ["103 kPa", "102 kPa", "101 kPa", "100 kPa", "99 kPa"],
       optimal: "OPTIMAL: 101.3 kPa",
       icon: Wind,
+    },
+    "rare-earth": {
+      title: "RARE-EARTH DEPOSITS",
+      unit: "%",
+      min: 70,
+      max: 100,
+      labels: ["100%", "92.5%", "85%", "77.5%", "70%"],
+      optimal: "CONCENTRATION: HIGH",
+      warning: "NEODYMIUM | DYSPROSIUM | YTTRIUM",
+      icon: Zap,
     },
   };
 

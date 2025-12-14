@@ -199,13 +199,13 @@ export function StationControls() {
   const getActionMessage = (buttonId: string): string => {
     switch (buttonId) {
       case "elevator":
-        return "ELEVATOR CALLED";
+        return "ELEVADOR CHAMADO";
       case "self-destruct":
-        return "SELF-DESTRUCT SEQUENCE INITIATED";
+        return "SEQUÊNCIA DE AUTODESTRUIÇÃO INICIADA";
       case "emergency":
-        return "EMERGENCY PROTOCOL ACTIVATED";
+        return "PROTOCOLO DE EMERGÊNCIA ATIVADO";
       default:
-        return "ACTION PERFORMED";
+        return "AÇÃO EXECUTADA";
     }
   };
 
@@ -285,26 +285,26 @@ export function StationControls() {
         <AlertDialogContent className="bg-black border-red-500 border-2">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-red-500">
-              WARNING: EMERGENCY PROTOCOL
+              AVISO: PROTOCOLO DE EMERGÊNCIA
             </AlertDialogTitle>
             <AlertDialogDescription className="text-primary">
               {emergencyButton?.function === "self-destruct"
-                ? "This action will initiate a 10-minute countdown to station destruction. This process cannot be reversed once started."
-                : "This will activate emergency protocols and may lock down certain areas of the facility."}{" "}
-              Are you absolutely certain you want to proceed?
+                ? "Esta ação iniciará uma contagem regressiva de 10 minutos para a destruição da estação. Este processo não pode ser revertido após iniciado."
+                : "Isto ativará protocolos de emergência e pode bloquear certas áreas da instalação."}{" "}
+              Você tem certeza absoluta de que deseja prosseguir?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="border-primary text-primary hover:bg-primary hover:text-black">
-              Cancel
+              Cancelar
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleEmergencyConfirm}
               className="bg-red-500 hover:bg-red-600 text-white"
             >
               {emergencyButton?.function === "self-destruct"
-                ? "Confirm Self-Destruct"
-                : "Confirm Emergency Protocol"}
+                ? "Confirmar Autodestruição"
+                : "Confirmar Protocolo de Emergência"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

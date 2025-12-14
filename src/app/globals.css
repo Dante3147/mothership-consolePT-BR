@@ -13,6 +13,7 @@
   --pink: 328 100% 54%;
 
   --primary: var(--amber-400);
+  --primary-rgb: 255, 191, 0;
   --primary-foreground: var(--black);
   --secondary: 0 0% 9%;
   --secondary-foreground: var(--primary);
@@ -76,8 +77,14 @@ body {
   --primary: var(--horus-green);
 }
 
+.smith-shimano {
+  --primary: 40 81% 42%; /* #d1920a */
+  --primary-rgb: 209, 146, 10;
+}
+
 .emergency-mode {
   --primary: var(--red-400);
+  --primary-rgb: 255, 0, 0;
 }
 
 /* Only make the emergency protocol text flash */
