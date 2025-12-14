@@ -1,7 +1,9 @@
 "use client";
 
 import { useScenario } from "@/src/context/scenario-context";
+import { useEncryption } from "@/src/context/encryption-context";
 import type { RoomDefinition, RoomId } from "@/src/models/station-graph-map";
+import { DecryptionKeyButton } from "@/src/components/decryption-key-button";
 import { type JSX, useEffect, useState } from "react";
 
 /**
@@ -11,6 +13,9 @@ import { type JSX, useEffect, useState } from "react";
  */
 export function StationGraphMap() {
   const { scenario, map, activeRooms, airlockStates } = useScenario();
+  const { randomRoom } = useEncryption();
+  const isHorus = scenario?.id === "TAO-095";
+  
   if (!map) return <div>Loading...</div>;
 
   const [connections, setConnections] = useState<
@@ -145,6 +150,8 @@ export function StationGraphMap() {
     const isActive =
       linkedButton !== undefined &&
       activeRooms?.has(roomDef.id) !== linkedButton.defaultState;
+    
+    const hasDecryptionKey = isHorus && roomDef.id === randomRoom;
 
     // Always use amber color for rooms regardless of emergency mode
     let strokeColor = "stroke-amber-400";
@@ -179,6 +186,20 @@ export function StationGraphMap() {
         >
           {roomDef.id.replace(/_/g, " ")}
         </text>
+        
+        {/* Botão de chave de decodificação (muito sutil) */}
+        {hasDecryptionKey && (
+          <foreignObject
+            x={roomWidth * 0.1}
+            y={roomHeight * 0.75}
+            width={roomWidth * 0.8}
+            height={roomHeight * 0.2}
+          >
+            <div className="flex justify-center items-center h-full">
+              <DecryptionKeyButton />
+            </div>
+          </foreignObject>
+        )}
       </g>
     );
   };
@@ -283,23 +304,23 @@ export function StationGraphMap() {
     >
       <div className="absolute top-2 left-2 z-10">
         <h2 className="text-lg md:text-xl font-bold">
-          {scenario.name} - INTERIOR VIEW
+          {scenario.name} - VISÃO INTERIOR
         </h2>
-        <p className="text-xs md:text-sm">AUTHORIZED ACCESS ONLY</p>
+        <p className="text-xs md:text-sm">SOMENTE ACESSO AUTORIZADO</p>
       </div>
 
       <div className="absolute top-2 right-2 z-10 flex flex-wrap justify-end gap-1 md:gap-2 text-[10px] md:text-xs">
         <div className="flex items-center gap-1">
           <div className="w-2 md:w-3 h-2 md:h-3 bg-green-500 rounded-full"></div>
-          <span>UNLOCKED</span>
+          <span>DESBLOQUEADO</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-2 md:w-3 h-2 md:h-3 bg-amber-400 rounded-full"></div>
-          <span>ROOM</span>
+          <span>SALA</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-2 md:w-3 h-2 md:h-3 bg-red-500 rounded-full"></div>
-          <span>LOCKED</span>
+          <span>TRANCADO</span>
         </div>
         {map.rooms.some((room) => room.type === "hallway") && (
           <div className="flex items-center gap-1">

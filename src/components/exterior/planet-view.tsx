@@ -6,6 +6,7 @@ import { OrbitControls, PerspectiveCamera, Stars } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { Tao095System } from "./tao-095-view";
 
 const orbitRadius = 120; // Distance from sun to planet
 const stationPosition = { x: 1, y: 0.35 }; // Normalized position on planet surface (0-1)
@@ -46,6 +47,9 @@ export function PlanetView() {
     };
   }, [isFreeCam]);
 
+  // Check if this is TAO-095
+  const isTao095 = currentMap.id === "TAO-095";
+
   return (
     <div className="border border-primary p-2 md:p-4 w-full h-full relative overflow-hidden">
       <div className="absolute top-2 left-2 z-10">
@@ -77,8 +81,14 @@ export function PlanetView() {
           <ambientLight intensity={0.5} />
           <pointLight position={[10, 10, 10]} />
 
-          <PlanetWithStation />
-          <OrbitalSystem />
+          {isTao095 ? (
+            <Tao095System />
+          ) : (
+            <>
+              <PlanetWithStation />
+              <OrbitalSystem />
+            </>
+          )}
           <group position={[orbitRadius, 0, 0]}>
             <Stars
               radius={100}
@@ -93,10 +103,10 @@ export function PlanetView() {
 
           <PerspectiveCamera
             makeDefault
-            position={[orbitRadius + 150, 80, 0]}
+            position={isTao095 ? [20, 10, 20] : [orbitRadius + 150, 80, 0]}
             fov={isMobile ? 40 : 30}
           />
-          {!isFreeCam && <CameraController />}
+          {!isFreeCam && !isTao095 && <CameraController />}
           <OrbitControls
             enableZoom={true}
             enablePan={true}
@@ -104,8 +114,8 @@ export function PlanetView() {
             zoomSpeed={0.6}
             panSpeed={0.5}
             rotateSpeed={0.2}
-            target={[orbitRadius, 0, 0]}
-            enabled={isFreeCam}
+            target={isTao095 ? [0, 0, 0] : [orbitRadius, 0, 0]}
+            enabled={isTao095 ? true : isFreeCam}
             enableDamping={false}
           />
         </Canvas>

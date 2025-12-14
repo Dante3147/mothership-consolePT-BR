@@ -39,7 +39,9 @@ export const ypsilon14 = (): Scenario => {
       { rooms: [null, "MINE_TUNNELS", null] },
     ],
     connections: [
+      //nesta parte você podera definir o codigo de acesso manual para portas trancadas
       { from: "DOCKING_BAY_1", to: "AIRLOCK_1", password: "0389" },
+      //nesta parte você podera definir o codigo de acesso manual para portas trancadas
       { from: "DOCKING_BAY_2", to: "AIRLOCK_2", defaultOpen: true },
       { from: "AIRLOCK_1", to: "WORKSPACE" },
       { from: "AIRLOCK_2", to: "WORKSPACE", defaultOpen: true },
@@ -53,72 +55,80 @@ export const ypsilon14 = (): Scenario => {
       { from: "MINE_AIRLOCK", to: "MINE_TUNNELS" },
     ],
     diagnostics: {
-      title: "Diagnostics",
+      title: "Diagnóstico",
       messages: [
         { type: "notice", message: "=========================" },
         {
           type: "check",
-          message: "Checking life support",
-          status: "Done",
+          message: "Checagem do suporte à vida",
+          status: "Ok",
           delay: 3000,
         },
         {
           type: "notice",
-          message: "Air filters replaced 455 day(s) ago.",
+          message: "Filtros de ar substituídos há 455 dias.",
         },
         {
           type: "notice",
-          message: "Life support systems operational.",
+          message: `${Math.floor(Math.random() * 80) + 1} banheiros entupidos no total, responsável desconhecido.`,
+        },
+        {
+          type: "notice",
+          message: "Sistemas de suporte à vida operacionais",
         },
         { type: "notice", message: "\n=========================" },
         {
           type: "check",
-          message: "Checking mining systems",
-          status: "Done",
+          message: "Checagem dos sistemas de mineração",
+          status: "Ok",
           delay: 2000,
         },
         {
           type: "notice",
-          message: "Mineshaft lift maintained 455 day(s) ago.",
+          message: `${Math.floor(Math.random() * 10) + 1} P.N.H CICLADA EM MODO MANUAL...AUTOR DESCONHECIDO.`,
         },
         {
           type: "notice",
-          message: "Mining systems operational.",
+          message: "Elevador da mina mantido há 455 dia(s).",
+        },
+        {
+          type: "notice",
+          message: "Sistemas de mineração operacionais.",
         },
         { type: "notice", message: "\n=========================" },
         {
           type: "check",
-          message: "Checking habitat integrity",
-          status: "Done",
+          message: "Checagem da integridade do habitat",
+          status: "Concluído",
           delay: 1000,
         },
         {
           type: "warning",
-          message: "Airflow O2.4%. Check crew quarters vents for blockage.",
+          message: "Fluxo de ar O2.4%. Verifique os dutos dos alojamentos da tripulação para bloqueios.",
         },
         {
           type: "warning",
-          message: "Shower #5 non-functional for 1 day(s).",
+          message: "Chuveiro #5 não funcional há 1 dia(s).",
         },
         { type: "notice", message: "\n=========================" },
         {
           type: "check",
-          message: "Checking docking bay(s)",
-          status: "Done",
+          message: "Checagem da(s) doca(s)",
+          status: "Concluído",
           delay: 1500,
         },
         {
           type: "warning",
-          message: "Airlock 1 manually overridden to LOCKED",
+          message: "Airlock 1 manualmente substituído para TRANCADO",
         },
         {
           type: "notice",
-          message: "Airlock 2 operational",
+          message: "Airlock 2 operacional",
         },
         { type: "notice", message: "\n=========================" },
         {
           type: "summary",
-          message: "All systems operating within acceptable parameters.",
+          message: "Todos os sistemas operando dentro dos parâmetros aceitáveis.",
         },
       ],
     },
@@ -129,12 +139,13 @@ export const ypsilon14 = (): Scenario => {
     name: "YPSILON 14",
     type: "asteroid",
     crew: { current: 9, capacity: 10 },
-    adminCredentials: { username: "SONYA", password: "PRINCES" },
+    adminCredentials: { username: "UNIÃO", password: "PRIME" },
+    //nesta parte aqui você pode adicionar as credenciais de admin para acessar areas restritas 
     charts: ["oxygen", "temperature"],
     stats: {
-      mass: "4.8 × 10^12 kg",
-      diameter: "3.2 km",
-      pressure: "1.2 bar",
+      massa: "4.8 × 10^12 kg",
+      diâmetro: "3.2 km",
+      pressão: "1.2 bar",
     },
     exteriorStats: [
       {
@@ -143,7 +154,7 @@ export const ypsilon14 = (): Scenario => {
       },
       {
         type: "rotationSpeed",
-        label: "ROTATION SPEED",
+        label: "VELOCIDADE DE ROTAÇÃO",
         unit: "RPM",
         defaultValue: Array(30).fill(1.2),
         min: 1.0,
@@ -152,7 +163,7 @@ export const ypsilon14 = (): Scenario => {
       },
       {
         type: "surfaceTemp",
-        label: "SURFACE TEMPERATURE",
+        label: "TEMPERATURA DA SUPERFÍCIE",
         unit: "°C",
         defaultValue: Array(30).fill(-145),
         min: -155,
@@ -161,7 +172,7 @@ export const ypsilon14 = (): Scenario => {
       },
       {
         type: "radiationLevel",
-        label: "RADIATION LEVEL",
+        label: "NÍVEL DE RADIAÇÃO",
         unit: "mSv",
         defaultValue: 142,
         isAlert: true,
@@ -169,61 +180,83 @@ export const ypsilon14 = (): Scenario => {
       },
       {
         type: "resourcesExtracted",
-        label: "RESOURCES EXTRACTED",
+        label: "RECURSOS EXTRAÍDOS",
         unit: "tons",
         defaultValue: 3842,
       },
       {
         type: "remainingDeposits",
-        label: "REMAINING DEPOSITS",
+        label: "DEPÓSITOS REMANESCENTES",
         unit: "tons",
         defaultValue: 18475,
       },
     ],
     map: baseMap,
     systemLogs: [
-      { time: "13.07.2184 13:20", message: "HERACLES ENTERED DOCKING BAY 1" },
+      //Exemplo para editar os logs da estação
+      { time: "13.07.2184 13:20", message: "personagem ENTROU NA DOCA 1" },
       {
         time: "04.08.2184 15:20",
-        message: "{{PLAYER_SHIP}} ENTERED DOCKING BAY 2",
+        message: "personagem ENTROU NA DOCA 2",
       },
+      //nesta parte você pode digitar ao relacionado a lore ira aparecer no log da estação
+      { time: "05.08.2184 08:15", message: `ARQUIVO system_${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}.log CRIADO` },
+      { time: "05.08.2184 09:42", message: `BACKUP backup_${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}.dat CONCLUÍDO` },
+      { time: "05.08.2184 11:23", message: `SCAN scan_${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}.tmp PROCESSADO` },
+      { time: "05.08.2184 08:15", message: `ARQUIVO system_${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}.log CRIADO` },
+      { time: "05.08.2184 09:42", message: `BACKUP backup_${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}.dat CONCLUÍDO` },
+      { time: "05.08.2184 11:23", message: `SCAN scan_${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}.tmp PROCESSADO` },
+      { time: "05.08.2184 08:15", message: `ARQUIVO system_${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}.log CRIADO` },
+      { time: "05.08.2184 09:42", message: `BACKUP backup_${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}.dat CONCLUÍDO` },
+      { time: "05.08.2184 11:23", message: `SCAN scan_${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}.tmp PROCESSADO` },
+      { time: "05.08.2184 08:15", message: `ARQUIVO system_${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}.log CRIADO` },
+      { time: "05.08.2184 09:42", message: `BACKUP backup_${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}.dat CONCLUÍDO` },
+      { time: "05.08.2184 11:23", message: `SCAN scan_${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}.tmp PROCESSADO` },
+
+
     ],
     controlButtons: [
       {
-        label: "SHOWERS",
+        label: "CHUVEIROS",
         defaultState: false,
         restricted: false,
         type: "toggle",
         linkedRoom: "WASHROOMS",
       },
       {
-        label: "SELF DESTRUCT",
+        label: "AUTODESTRUIÇÃO",
         defaultState: false,
         restricted: true,
         type: "action",
         function: "self-destruct",
       },
       {
-        label: "BAY 1",
+        label: "DOCA 1",
         defaultState: false,
         restricted: true,
         type: "toggle",
         toggleStates: {
-          true: "UNLATCHED",
-          false: "LATCHED",
+          true: "DESTRANCADO",
+          false: "TRANCADO",
         },
         linkedRoom: "DOCKING_BAY_1",
       },
       {
-        label: "BAY 2",
+        label: "DOCA 2",
         defaultState: false,
         restricted: true,
         type: "toggle",
         toggleStates: {
-          true: "UNLATCHED",
-          false: "LATCHED",
+          true: "DESTRANCADO",
+          false: "TRANCADO",
         },
         linkedRoom: "DOCKING_BAY_2",
+      },
+      {
+        label: "DADOS-ESTAÇÃO",
+        defaultState: false,
+        restricted: false,
+        type: "action",
       },
     ],
     theme: "amber",

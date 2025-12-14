@@ -13,11 +13,13 @@ import {
 import { useAdmin } from "@/src/context/admin-context";
 import { useDiagnostics } from "@/src/context/diagnostics-context";
 import { useEmergency } from "@/src/context/emergency-context";
+import { useEncryption } from "@/src/context/encryption-context";
 import { useScenario } from "@/src/context/scenario-context";
 import type { RoomId } from "@/src/models/station-graph-map";
 import { useState } from "react";
 import { AirlockControlPanel } from "./airlock-controls";
 import { ControlButton } from "./control-button";
+import { StationDataModal } from "./station-data-modal";
 
 /**
  * Renders a panel of controls for the station.
@@ -31,6 +33,9 @@ export function StationControls() {
   const { setEmergency, startEmergency } = useEmergency();
   const { diagnosticsVisible, showDiagnostics, hideDiagnostics } =
     useDiagnostics();
+  const { setShowEncryptedModal, keyCopied } = useEncryption();
+  
+  const isHorus = scenario?.id === "TAO-095";
 
   if (!map || !scenario.controlButtons) return <div>Loading...</div>;
 
@@ -64,11 +69,24 @@ export function StationControls() {
     .map((room) => ({ id: room.id }));
 
   const [selectedAirlock, setSelectedAirlock] = useState<RoomId | null>(null);
+  const [showStationData, setShowStationData] = useState(false);
 
   const handleButtonClick = (buttonLable: string) => {
     // Find the button definition
     const buttonDef = controlButtons.find((b) => b.label === buttonLable);
     if (!buttonDef) return;
+
+    // Check for station data button
+    if (buttonLable === "DADOS-ESTAÇÃO") {
+      setShowStationData(true);
+      return;
+    }
+
+    // Check for decrypt button
+    if (buttonLable === "DESCRIPTOGRAFAR") {
+      setShowEncryptedModal(true);
+      return;
+    }
 
     // Check if this is a restricted button that needs admin privileges
     if (buttonDef.restricted && !isAdmin) {
@@ -210,8 +228,14 @@ export function StationControls() {
   return (
     <div className="grid grid-cols-2 gap-2 [&>*]:h-full auto-rows-fr">
       {controlButtons.map((button) => {
+        // Esconder botão DESCRIPTOGRAFAR se o código não foi copiado
+        if (isHorus && button.label === "DESCRIPTOGRAFAR" && !keyCopied) {
+          return null;
+        }
+
         const isRestricted = button.restricted;
         const isActive = buttonStates[button.label];
+        const isDecryptButton = button.label === "DESCRIPTOGRAFAR";
 
         return (
           <ControlButton
@@ -221,6 +245,7 @@ export function StationControls() {
             isActive={isActive}
             isRestricted={isRestricted && !isAdmin}
             onClick={() => handleButtonClick(button.label)}
+            className={isDecryptButton && keyCopied ? "animate-pulse" : ""}
           >
             {actionMessages[button.label] && (
               <div className="absolute -top-8 left-0 right-0 bg-primary text-black text-xs p-1 rounded text-center">
@@ -246,7 +271,7 @@ export function StationControls() {
       ))}
 
       <ControlButton
-        label={diagnosticsVisible ? "ABORT DIAGNOSTICS" : "RUN DIAGNOSTICS"}
+        label={diagnosticsVisible ? "ABORTAR DIAGNOSTICO" : "EXECUTAR DIAGNÓSTICO"}
         type="action"
         onClick={() =>
           diagnosticsVisible ? hideDiagnostics() : showDiagnostics()
@@ -293,6 +318,11 @@ export function StationControls() {
           onClose={() => setSelectedAirlock(null)}
         />
       )}
+
+      <StationDataModal
+        open={showStationData}
+        onClose={() => setShowStationData(false)}
+      />
     </div>
   );
 }

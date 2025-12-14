@@ -77,7 +77,7 @@ export function WardenMenu({
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
       <div className="bg-gray-900 border-2 border-primary p-4 md:p-6 rounded-lg max-w-4xl w-full mx-4">
-        <h2 className="text-lg md:text-xl font-bold mb-4">SELECT SCENARIO</h2>
+        <h2 className="text-lg md:text-xl font-bold mb-4">SELECIONE A ESTAÇÃO</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
           {allScenarios.map((map, index) => (
             <button
@@ -94,7 +94,7 @@ export function WardenMenu({
           ))}
         </div>
 
-        <h2 className="text-lg md:text-xl font-bold mb-4 mt-6">SELECT THEME</h2>
+        <h2 className="text-lg md:text-xl font-bold mb-4 mt-6">SELECIONE O TEMA</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
           {allThemes.map((t) => (
             <button
@@ -111,18 +111,18 @@ export function WardenMenu({
 
         <div className="mt-8 flex items-center justify-between">
           <a
-            href="https://github.com/Fasust/mothership-console?tab=readme-ov-file#%EF%B8%8F-features"
+            href="https://github.com/Dante3147/mothership-consolePT-BR"
             target="_blank"
             rel="noopener noreferrer"
             className="px-3 py-1 md:px-4 md:py-2 border border-primary hover:bg-primary/20 rounded"
           >
-            INSTRUCTIONS
+            INSTRUÇÕES
           </a>
           <button
             onClick={() => setShowWardenMenu(false)}
             className="px-3 py-1 md:px-4 md:py-2 border border-primary hover:bg-primary/20 rounded"
           >
-            CLOSE
+            FECHAR
           </button>
         </div>
       </div>

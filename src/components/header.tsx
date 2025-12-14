@@ -51,7 +51,7 @@ export function Header() {
   const { currentView, setCurrentView } = useView();
   const router = useRouter();
   const params = useParams();
-  const currentTime = DateTime.now().plus({ year: 100 });
+  // const currentTime = DateTime.now().plus({ year: 100 });
   const scenarioId = params.scenario as string;
 
   const handleViewChange = (view: ViewType) => {
@@ -87,19 +87,20 @@ export function Header() {
           {isAdmin && (
             <div className="flex items-center gap-1 text-green-500">
               <Shield className="h-4 w-4" />
-              <span className="text-sm md:text-xl">ADMIN MODE</span>
+              <span className="text-sm md:text-xl">MODO ADMINISTRADOR</span>
             </div>
           )}
         </div>
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
           <div className="text-sm md:text-base font-mono">
             <p className="flex justify-between">
-              <span>CREW:&nbsp;</span>
+              <span>TRIPULANTES:&nbsp;</span>
               {scenario.crew.current}/{scenario.crew.capacity}
             </p>
             <p className="flex justify-between">
-              <span>DATE:&nbsp;</span>
-              <span>{currentTime.toFormat("dd-MM-yyyy")}</span>
+              <span>DATA:&nbsp;</span>
+              <span>13-12-9000</span>
+              {/* Na linha 102 você podera adicionar a data com base na campanha */}
             </p>
           </div>
           {availableViews.length > 1 && (
@@ -113,7 +114,7 @@ export function Header() {
                   }`}
                 >
                   <MapIcon className="mr-1 h-3 w-3 md:h-4 md:w-4" />
-                  STATION MAP
+                  MAPA DA ESTAÇÃO
                 </Button>
               )}
               {availableViews.includes("interior-ascii") && (
@@ -127,7 +128,7 @@ export function Header() {
                   }`}
                 >
                   <Terminal className="mr-1 h-3 w-3 md:h-4 md:w-4" />
-                  INTERIOR VIEW
+                  VISÃO INTERIOR
                 </Button>
               )}
               {availableViews.includes("exterior") && (
@@ -139,7 +140,7 @@ export function Header() {
                   }`}
                 >
                   <Radio className="mr-1 h-3 w-3 md:h-4 md:w-4" />
-                  EXTERIOR VIEW
+                  VISTA EXTERNA
                 </Button>
               )}
             </div>

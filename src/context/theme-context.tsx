@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 
 const defaultTheme: Theme = "amber";
 export type Theme = (typeof allThemes)[number];
-export const allThemes = ["amber", "cyan", "green", "white", "pink"] as const;
+export const allThemes = ["amber", "cyan", "green", "white", "pink", "horus"] as const;
 
 interface ThemeContextType {
   theme: Theme;

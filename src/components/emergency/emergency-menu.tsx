@@ -85,7 +85,7 @@ export function EmergencyMenu({
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[60]">
       <div className="bg-black border-2 border-primary p-4 rounded-lg max-w-md w-full mx-4">
         <h2 className="text-2xl font-bold mb-4 text-primary">
-          EMERGENCY PROTOCOL CONTROL
+          CONTROLE DE PROTOCOLO DE EMERGÊNCIA
         </h2>
 
         <div className="space-y-4">
@@ -98,7 +98,7 @@ export function EmergencyMenu({
               className="h-4 w-4 rounded border-primary bg-black text-primary focus:ring-primary focus:ring-offset-0 accent-primary"
             />
             <label htmlFor="alarm-toggle" className="text-primary">
-              Just Count Down - No Alarm
+              Apenas contagem regressiva - Sem alarme
             </label>
           </div>
         </div>
@@ -107,19 +107,19 @@ export function EmergencyMenu({
           <div className="space-y-4">
             {emergency.countdown !== null && (
               <p className="text-primary text-xl">
-                Countdown: {formatTime(emergency.countdown)}
+                Contagem regressiva: {formatTime(emergency.countdown)}
               </p>
             )}
             <button
               onClick={stopEmergency}
               className="w-full p-2 border border-red-500 text-red-500 hover:bg-red-500/10 rounded"
             >
-              DEACTIVATE EMERGENCY MODE
+              DESATIVAR MODO DE EMERGÊNCIA
             </button>
           </div>
         ) : (
           <div className="space-y-2">
-            <p className="mb-2">Enter countdown duration (mmm:ss):</p>
+            <p className="mb-2">Insira a duração da contagem regressiva. (minutos:segundos)</p>
             <div className="space-y-4">
               <div className="flex gap-2">
                 <input
@@ -133,7 +133,7 @@ export function EmergencyMenu({
                   onClick={handleStartCountdown}
                   className="p-2 border border-primary text-primary hover:bg-primary/10 rounded"
                 >
-                  START
+                  COMEÇAR
                 </button>
               </div>
               {inputError && (
@@ -143,16 +143,16 @@ export function EmergencyMenu({
                 onClick={() => startEmergencyLocal(null)}
                 className="w-full p-2 border border-primary text-primary hover:bg-primary/10 rounded"
               >
-                UNLIMITED EMERGENCY
+                EMERGÊNCIA ILIMITADA
               </button>
             </div>
           </div>
         )}
         <div className="space-y-4 border-t border-primary pt-4">
-          <h3 className="text-xl font-bold text-primary">Sound Controls</h3>
+          <h3 className="text-xl font-bold text-primary">Controles de som</h3>
           <div className="space-y-2">
             <div>
-              <label className="block text-sm mb-1">Alarm Volume</label>
+              <label className="block text-sm mb-1">Volume do alarme</label>
               <div className="flex items-center gap-2">
                 <input
                   type="range"
@@ -169,7 +169,7 @@ export function EmergencyMenu({
               </div>
             </div>
             <div>
-              <label className="block text-sm mb-1">Tick Volume</label>
+              <label className="block text-sm mb-1">Volume de tiques</label>
               <div className="flex items-center gap-2">
                 <input
                   type="range"
@@ -193,7 +193,7 @@ export function EmergencyMenu({
             onClick={() => setShowEmergencyMenu(false)}
             className="px-4 py-2 border border-primary hover:bg-primary/20 rounded"
           >
-            CLOSE
+            FECHAR
           </button>
         </div>
       </div>

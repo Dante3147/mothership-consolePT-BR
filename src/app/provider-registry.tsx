@@ -5,6 +5,7 @@ import { AdminProvider } from "@/src/context/admin-context";
 import { AudioProvider } from "@/src/context/audio-context";
 import { DiagnosticsProvider } from "@/src/context/diagnostics-context";
 import { EmergencyProvider } from "@/src/context/emergency-context";
+import { EncryptionProvider } from "@/src/context/encryption-context";
 import { PoiProvider } from "@/src/context/poi-context";
 import { ScenarioProvider } from "@/src/context/scenario-context";
 import { TableSortProvider } from "@/src/context/table-sort-context";
@@ -27,20 +28,22 @@ export function ProviderRegistry({ children }: { children: React.ReactNode }) {
       <ThemeProvider>
         <EmergencyProvider>
           <ScenarioProvider initialMapId={scenario}>
-            <DiagnosticsProvider>
-              <ViewProvider initialViewType={viewType}>
-                <AdminProvider>
-                  <PoiProvider>
-                    <TableSortProvider>
-                      <div className="min-h-screen">
-                        {children}
-                        <CommandPalette />
-                      </div>
-                    </TableSortProvider>
-                  </PoiProvider>
-                </AdminProvider>
-              </ViewProvider>
-            </DiagnosticsProvider>
+            <EncryptionProvider>
+              <DiagnosticsProvider>
+                <ViewProvider initialViewType={viewType}>
+                  <AdminProvider>
+                    <PoiProvider>
+                      <TableSortProvider>
+                        <div className="min-h-screen">
+                          {children}
+                          <CommandPalette />
+                        </div>
+                      </TableSortProvider>
+                    </PoiProvider>
+                  </AdminProvider>
+                </ViewProvider>
+              </DiagnosticsProvider>
+            </EncryptionProvider>
           </ScenarioProvider>
         </EmergencyProvider>
       </ThemeProvider>

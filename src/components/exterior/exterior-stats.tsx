@@ -125,7 +125,7 @@ export function ExteriorStats() {
     const composition =
       compositionData[scenario.type] || compositionData.asteroid;
 
-    let title = "COMPOSITION ANALYSIS";
+    let title = "ANÁLISE DE COMPOSIÇÃO";
     if (scenario.type === "planet") {
       title = "ATMOSPHERIC ANALYSIS";
     } else if (scenario.type === "bell") {
@@ -387,16 +387,16 @@ const statIcons = {
 // Composition data for different scenario types
 const compositionData = {
   asteroid: [
-    { name: "IRON", value: 62 },
-    { name: "NICKEL", value: 14 },
-    { name: "COBALT", value: 8 },
-    { name: "OTHER MINERALS", value: 16 },
+    { name: "FERRO", value: 62 },
+    { name: "NÍQUEL", value: 14 },
+    { name: "COBALTO", value: 8 },
+    { name: "OUTROS MINERAIS", value: 16 },
   ],
   planet: [
-    { name: "NITROGEN", value: 68 },
-    { name: "OXYGEN", value: 24 },
-    { name: "ARGON", value: 5 },
-    { name: "OTHER GASES", value: 3 },
+    { name: "NITROGÊNIO", value: 68 },
+    { name: "OXIGÊNIO", value: 24 },
+    { name: "ARGÔNIO", value: 5 },
+    { name: "OUTROS GASES", value: 3 },
   ],
   bell: [
     { name: "HULL INTEGRITY", value: 96 },

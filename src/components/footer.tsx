@@ -82,8 +82,8 @@ export function Footer({ onTerminalClick }: { onTerminalClick: () => void }) {
       style={{ userSelect: "none" }}
     >
       <div className="flex justify-between">
-        <div onClick={handleTerminalClick}>{name} TERMINAL INTERFACE</div>
-        <div onClick={handleEmergencyClick}>AUTHORIZED ACCESS ONLY</div>
+        <div onClick={handleTerminalClick}>{name} INTERFACE DO TERMINAL</div>
+        <div onClick={handleEmergencyClick}>SOMENTE ACESSO AUTORIZADO</div>
       </div>
 
       {showEmergencyMenu && (

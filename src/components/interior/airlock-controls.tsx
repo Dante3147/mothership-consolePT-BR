@@ -3,6 +3,7 @@
 import { useAdmin } from "@/src/context/admin-context";
 import { AirlockState, useScenario } from "@/src/context/scenario-context";
 import type { RoomId } from "@/src/models/station-graph-map";
+import { Skull } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ControlButton } from "./control-button";
 
@@ -160,7 +161,7 @@ export function AirlockControlPanel({
             <div className="flex items-center gap-2">
               <h3 className="text-xl font-bold">{roomId.replace(/_/g, " ")}</h3>
               {state.pressureLossRisk && (
-                <div className="flex items-center gap-1 text-red-500">
+                <div className="flex items-center gap-1 text-red-500 animate-pulse">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -174,7 +175,7 @@ export function AirlockControlPanel({
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                     />
                   </svg>
-                  <span>PRESSURE LOSS RISK</span>
+                  <span>RISCO DE PERDA DE PRESSÃO</span>
                 </div>
               )}
             </div>
@@ -248,7 +249,7 @@ export function AirlockControlPanel({
                       key={connectedRoomId}
                       onClick={() => handleDoorToggle(connectedRoomId, isOpen)}
                       label={`${connectedRoomId.replace(/_/g, " ")}: ${
-                        isOpen ? "UNLOCKED" : "LOCKED"
+                        isOpen ? "DESBLOQUEADO" : "BLOQUEADO"
                       }`}
                       type="toggle"
                       isActive={isOpen}
@@ -262,14 +263,14 @@ export function AirlockControlPanel({
 
             <div className="grid grid-cols-2 gap-2 mt-6">
               <ControlButton
-                label="UNLOCK ALL"
+                label="DESBLOQUEAR TUDO"
                 isActive={false}
                 type={state.pressureLossRisk ? "toggle" : "action"}
                 isRestricted={state.pressureLossRisk && !isAdmin}
                 onClick={handleOpenAll}
               />
               <ControlButton
-                label="LOCK ALL"
+                label="BLOQUEAR TUDO"
                 type="action"
                 onClick={handleCloseAll}
               />
@@ -280,22 +281,26 @@ export function AirlockControlPanel({
       {showAllOpenWarning && (
         <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-[60]">
           <div className="bg-black border border-red-500 p-4 rounded max-w-sm w-full">
-            <h3 className="text-xl font-bold text-red-500 mb-2">DANGER</h3>
+            <div className="flex items-center gap-2 mb-2">
+              <Skull className="h-6 w-6 text-red-500 animate-pulse" />
+              <h3 className="text-xl font-bold text-red-500 animate-pulse">PERIGO</h3>
+              <Skull className="h-6 w-6 text-red-500 animate-pulse" />
+            </div>
             <p className="mb-4">
               {isAdmin
-                ? "Opening all doors on an airlock may result in loss of cabin pressure. Are you sure you want to proceed?"
-                : "Opening all doors on an airlock may result in loss of cabin pressure. Administrator privileges required to unlock all doors."}
+                ? "Abrir todas as portas de uma câmara de descompressão pode resultar na perda de pressão na cabine. Tem certeza de que deseja prosseguir?"
+                : "Abrir todas as portas de uma câmara de descompressão pode resultar na perda de pressão na cabine. São necessárias permissões de administrador para destrancar todas as portas.."}
             </p>
             <div className="flex justify-end space-x-2">
               <button
                 onClick={handleCancelAllOpen}
                 className="px-4 py-2 border border-primary rounded hover:bg-primary/20"
               >
-                CANCEL
+                CANCELAR
               </button>
               {isAdmin && (
                 <ControlButton
-                  label="UNLOCK ALL"
+                  label="DESBLOQUEAR TUDO"
                   isActive={false}
                   type="toggle"
                   isRestricted={!isAdmin}
@@ -309,16 +314,16 @@ export function AirlockControlPanel({
       {showPasswordPrompt && (
         <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-[60]">
           <div className="bg-black border border-primary p-4 rounded max-w-sm w-full">
-            <h3 className="text-xl font-bold mb-2">ACCESS CODE REQUIRED</h3>
+            <h3 className="text-xl font-bold mb-2">CÓDIGO DE ACESSO NECESSÁRIO</h3>
             <p className="mb-4">
-              Please enter the access code to operate this door.
+              Por favor, insira o código de acesso para operar esta porta.
             </p>
             <div className="space-y-2 mb-4">
               <input
                 type="text"
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
-                placeholder="ENTER ACCESS CODE"
+                placeholder="INSIRA O CÓDIGO DE ACESSO"
                 className="w-full bg-black border border-primary p-2 rounded text-primary"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -340,13 +345,13 @@ export function AirlockControlPanel({
                 }}
                 className="px-4 py-2 border border-primary rounded hover:bg-primary/20"
               >
-                CANCEL
+                CANCELAR
               </button>
               <button
                 onClick={handlePasswordSubmit}
                 className="px-4 py-2 border border-primary rounded hover:bg-primary/20"
               >
-                SUBMIT
+                ENVIAR
               </button>
             </div>
           </div>

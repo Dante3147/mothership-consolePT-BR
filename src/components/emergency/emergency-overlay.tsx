@@ -61,7 +61,7 @@ export function EmergencyOverlay() {
                   : "text-red-500 text-sm font-bold mb-1"
               }
             >
-              {emergency.alarm ? "EMERGENCY PROTOCOL" : "COUNTDOWN"}
+              {emergency.alarm ? "PROTOCOLO DE EMERGÊNCIA" : "CONTAGEM REGRESSIVA"}
             </h2>
             <div
               className={

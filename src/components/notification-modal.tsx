@@ -19,7 +19,7 @@ export function NotificationModal({
   const isSuccess = type === "success";
   const borderColor = isSuccess ? "border-green-500" : "border-red-500";
   const textColor = isSuccess ? "text-green-500" : "text-red-500";
-  const title = isSuccess ? "ACCESS GRANTED" : "ACCESS DENIED";
+  const title = isSuccess ? "ACESSO CONCEDIDO" : "ACESSO NEGADO";
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

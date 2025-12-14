@@ -10,6 +10,7 @@ import { InfoPanel } from "@/src/components/interior/info-panel";
 import { AsciiInteriorView } from "@/src/components/interior/station-ascii-map";
 import { StationGraphMap as StationMapComponent } from "@/src/components/interior/station-graph-map";
 import { WardenMenu } from "@/src/components/warden-menu";
+import { EncryptedMessagesModal } from "@/src/components/encrypted-messages-modal";
 import { useDiagnostics } from "@/src/context/diagnostics-context";
 import { useEmergency } from "@/src/context/emergency-context";
 import { useScenario } from "@/src/context/scenario-context";
@@ -47,6 +48,7 @@ export default function ViewSelector() {
           setShowDiagnostics={setShowDiagnostics}
         />
         <EmergencyOverlay />
+        <EncryptedMessagesModal />
       </div>
     </main>
   );
@@ -114,7 +116,7 @@ function MainContent({
   const dataLabel = () => {
     switch (scenario.type) {
       case "asteroid":
-        return "ASTEROID DATA";
+        return "DADOS DE ASTEROIDES";
       case "planet":
         return "PLANETARY DATA";
       case "bell":

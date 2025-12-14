@@ -3,8 +3,10 @@
 import { useDiagnostics } from "@/src/context/diagnostics-context";
 import { useEmergency } from "@/src/context/emergency-context";
 import { useScenario } from "@/src/context/scenario-context";
+import { useEncryption } from "@/src/context/encryption-context";
 import type { DiagnosticMessage } from "@/src/models/station-graph-map";
 import { useEffect, useState } from "react";
+import { Button } from "@/src/components/button";
 
 /**
  * Renders a view of the diagnostics of the station.
@@ -12,10 +14,12 @@ import { useEffect, useState } from "react";
  * Uses the scenario.map.diagnostics property to display the diagnostics.
  */
 export function DiagnosticsView() {
-  const { map } = useScenario();
+  const { map, scenario } = useScenario();
   const { emergency } = useEmergency();
   const { hideDiagnostics } = useDiagnostics();
+  const { addMessage, setShowEncryptedModal, messages, setOnDecryptSuccess, isDecrypted } = useEncryption();
   const diagnostics = map?.diagnostics;
+  const isHorus = scenario?.id === "TAO-095";
   const [visibleMessages, setVisibleMessages] = useState<DiagnosticMessage[]>(
     []
   );
@@ -27,6 +31,7 @@ export function DiagnosticsView() {
   const [loadingDashes, setLoadingDashes] = useState("");
   const [currentMessage, setCurrentMessage] =
     useState<DiagnosticMessage | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
 
   // Start displaying messages one by one with delays
   useEffect(() => {
@@ -77,7 +82,7 @@ export function DiagnosticsView() {
           clearTimeout(endDelayTimer);
           clearInterval(dashInterval);
         };
-      }, message.message.length * 10 + 200); // Time to type + small buffer
+      }, message.message.length * 0.1 + 10); // Time to type + small buffer
 
       return () => clearTimeout(delayTimer);
     }
@@ -93,7 +98,7 @@ export function DiagnosticsView() {
           (prev) => prev + currentMessage.message[currentCharIndex]
         );
         setCurrentCharIndex((prev) => prev + 1);
-      }, 10);
+      }, 0.1);
 
       return () => clearTimeout(timer);
     } else {
@@ -112,6 +117,54 @@ export function DiagnosticsView() {
     }
   }, [isTyping, currentCharIndex, currentMessage]);
 
+  // Registrar callback para quando descriptografar com sucesso
+  useEffect(() => {
+    if (isHorus) {
+      setOnDecryptSuccess(() => () => {
+        // Mostrar mensagem de sucesso
+        alert("✓ DESCRIPTOGRAFIA CONCLUÍDA COM SUCESSO\n\nTodas as conversas criptografadas foram liberadas!");
+        
+        // Opcional: Adicionar mensagens descriptografadas ao console
+        const decryptedMsgs: DiagnosticMessage[] = [
+          {
+            type: "summary" as const,
+            message: "\n\n╔════════════════════════════════════════════╗",
+          },
+          {
+            type: "notice" as const,
+            message: "║ DESCRIPTOGRAFIA CONCLUÍDA COM SUCESSO ║",
+          },
+          {
+            type: "summary" as const,
+            message: "╚════════════════════════════════════════════╝\n",
+          },
+        ];
+
+        // Adicionar cada mensagem descriptografada
+        messages.forEach((msg, index) => {
+          if (msg.decryptedContent) {
+            decryptedMsgs.push({
+              type: "summary" as const,
+              message: `\n━━━ TRANSMISSÃO #${index + 1} ━━━`,
+            });
+            decryptedMsgs.push({
+              type: "notice" as const,
+              message: msg.decryptedContent,
+            });
+          }
+        });
+
+        decryptedMsgs.push({
+          type: "summary" as const,
+          message: "\n" + "═".repeat(60) + "\n",
+        });
+
+        // Adicionar ao console existente
+        setVisibleMessages((prev) => [...prev, ...decryptedMsgs]);
+      });
+    }
+  }, [isHorus, messages, setOnDecryptSuccess]);
+
   // Handle keyboard input to close when complete
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -123,6 +176,41 @@ export function DiagnosticsView() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  // Generate report file
+  const generateReport = () => {
+    if (!diagnostics || !map) return;
+
+    // Build report content
+    let reportContent = `${diagnostics.title.toUpperCase()}\n`;
+    reportContent += `${"=".repeat(50)}\n\n`;
+
+    // Add all visible messages
+    visibleMessages.forEach((msg) => {
+      reportContent += `${msg.message}\n`;
+    });
+
+    // Add 6 random numeric sequences at the end
+    reportContent += `\n${"=".repeat(50)}\n`;
+    reportContent += `SEQUÊNCIAS DE VERIFICAÇÃO:\n\n`;
+    for (let i = 0; i < 6; i++) {
+      const sequence = Array.from({ length: 16 }, () =>
+        Math.floor(Math.random() * 16).toString(16)
+      ).join("");
+      reportContent += `${i + 1}. ${sequence.toUpperCase()}\n`;
+    }
+
+    // Create and download file
+    const blob = new Blob([reportContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `relatorio_diagnostico_${Date.now()}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   // Render a message based on its type
   const renderMessage = (message: DiagnosticMessage, index: number) => {
@@ -145,9 +233,37 @@ export function DiagnosticsView() {
     );
   };
 
+  const isComplete =
+    currentMessageIndex >= (diagnostics?.messages.length || 0) &&
+    !isTyping &&
+    !isDelaying;
+
+  // Função para encerrar o terminal
+  const handleCloseTerminal = () => {
+    setIsClosing(true);
+    
+    // Adicionar mensagem de encerramento
+    setVisibleMessages((prev) => [
+      ...prev,
+      {
+        type: "notice" as const,
+        message: "\n\nEncerrando Console...",
+      },
+    ]);
+
+    // Aguardar 1.5 segundos antes de fechar e redirecionar
+    setTimeout(() => {
+      hideDiagnostics();
+      // Mudar para a view do mapa (interior-ascii)
+      if (scenario?.id) {
+        window.location.href = `/${scenario.id}/interior-ascii`;
+      }
+    }, 1500);
+  };
+
   return (
     <div
-      className={`border border-primary p-4 h-[500px] md:h-[800px] relative overflow-hidden bg-black ${
+      className={`border border-primary p-4 h-[900px] md:h-[1400px] relative flex flex-col bg-black overflow-y-auto custom-scrollbar ${
         emergency.active ? "text-red-500" : "text-primary"
       }`}
     >
@@ -155,7 +271,7 @@ export function DiagnosticsView() {
         {diagnostics?.title || "Diagnostics"}
       </div>
 
-      <div className="font-mono whitespace-pre-wrap">
+      <div className="font-mono whitespace-pre-wrap flex-1">
         {visibleMessages.map(renderMessage)}
 
         {/* Currently typing message or check message in loading state */}
@@ -173,6 +289,27 @@ export function DiagnosticsView() {
           </div>
         )}
       </div>
+
+      {/* Print Report and Close Terminal Buttons */}
+      {isComplete && !isClosing && (
+        <div className="flex justify-end gap-3 mt-4 pb-4">
+          <Button
+            onClick={generateReport}
+            className="font-mono text-xs tracking-wider px-4 py-2 animate-pulse border-2 border-primary shadow-[0_0_10px_rgba(245,158,11,0.5)] hover:shadow-[0_0_20px_rgba(245,158,11,0.8)]"
+          >
+            DOWNLOAD
+          </Button>
+          {isHorus && (
+            <Button
+              onClick={handleCloseTerminal}
+              className="font-mono text-xs tracking-wider px-4 py-2 animate-pulse border-2 border-red-500 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)] hover:shadow-[0_0_20px_rgba(239,68,68,0.8)]"
+            >
+              ENCERRAR-TERMINAL
+            </Button>
+          )}
+        </div>
+      )}
+
     </div>
   );
 }

@@ -11,6 +11,7 @@ interface ControlButtonProps {
   type: ControlButtonType;
   onClick: () => void;
   children?: ReactNode;
+  className?: string;
 }
 
 /**
@@ -26,6 +27,7 @@ export function ControlButton({
   onClick,
   children,
   restrictionLabel = "ADMIN",
+  className = "",
 }: ControlButtonProps) {
   let color = "";
   switch (type) {
@@ -49,7 +51,7 @@ export function ControlButton({
     <div className="relative h-full">
       <button
         onClick={onClick}
-        className={`w-full h-full p-2 border rounded ${style}`}
+        className={`w-full h-full p-2 border rounded ${style} ${className}`}
       >
         {`${label}${isRestricted ? ` [${restrictionLabel}]` : ""}`}
         {children}

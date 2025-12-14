@@ -52,6 +52,10 @@ const config: Config = {
           400: "hsl(var(--green-400))",
           500: "#00ff00",
         },
+        horus: {
+          DEFAULT: "#126127",
+          400: "hsl(var(--horus-green))",
+        },
         yellow: {
           500: "#ffff00",
         },

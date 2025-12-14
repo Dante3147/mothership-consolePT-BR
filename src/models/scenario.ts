@@ -6,6 +6,12 @@ import { gretaBase } from "./scenarios/greta-base";
 import { prosperosDream } from "./scenarios/prosperos-dream";
 import { rsvFidanza } from "./scenarios/rsv-fidanza";
 import { ypsilon14, ypsilon14WithTunnels } from "./scenarios/ypsilon-14";
+import { luna7 } from "./scenarios/luna-7";
+import { titanClass } from "./scenarios/titan-class";
+import { helios } from "./scenarios/helios";
+import { nexus } from "./scenarios/nexus";
+import { omega } from "./scenarios/omega";
+import { tao095 } from "./scenarios/tao-095";
 import { RoomId, StationGraphMap } from "./station-graph-map";
 
 /**
@@ -65,6 +71,12 @@ export const allScenarios = [
   deepStation(),
   prosperosDream(),
   rsvFidanza(),
+  luna7(),
+  titanClass(),
+  helios(),
+  nexus(),
+  omega(),
+  tao095(),
 ];
 
 export type SystemLog = {

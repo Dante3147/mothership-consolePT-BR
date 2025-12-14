@@ -49,7 +49,7 @@ export function ShipView() {
         <h2 className="text-lg md:text-xl font-bold">
           {currentMap.name} - EXTERIOR VIEW
         </h2>
-        <p className="text-xs md:text-sm">ORBITAL POSITION: 248.32° / 45.18°</p>
+        <p className="text-xs md:text-sm">POSIÇÃO ORBITAL: 248.32° / 45.18°</p>
       </div>
 
       <div
