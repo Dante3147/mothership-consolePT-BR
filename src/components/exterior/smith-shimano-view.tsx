@@ -17,6 +17,7 @@ const moonOrbitRadius3 = 35;
 const satelliteOrbitRadius1 = 42;
 const satelliteOrbitRadius2 = 48;
 const satelliteOrbitRadius3 = 54;
+const stationOrbitRadius = 62;
 
 /**
  * Sistema Smith-Shimano Mega-Planet C
@@ -36,6 +37,7 @@ export function SmithShimanoSystem() {
   const satellite1Ref = useRef<THREE.Mesh>(null);
   const satellite2Ref = useRef<THREE.Mesh>(null);
   const satellite3Ref = useRef<THREE.Mesh>(null);
+  const stationRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
@@ -86,6 +88,14 @@ export function SmithShimanoSystem() {
       satellite3Ref.current.position.z = Math.sin(time * 0.65 + 4.2) * satelliteOrbitRadius3;
       satellite3Ref.current.rotation.z = time * 2;
     }
+
+    // Órbita da estação espacial (órbita mais alta)
+    if (stationRef.current) {
+      stationRef.current.position.x = Math.cos(time * 0.2) * stationOrbitRadius;
+      stationRef.current.position.z = Math.sin(time * 0.2) * stationOrbitRadius;
+      stationRef.current.position.y = Math.sin(time * 0.12) * 6;
+      stationRef.current.rotation.y = time * 0.15;
+    }
   });
 
   return (
@@ -109,6 +119,51 @@ export function SmithShimanoSystem() {
         />
       </mesh>
       <pointLight position={[yellowSunDistance, -10, 20]} intensity={2} color="#ffdd00" distance={250} />
+
+      {/* Estação espacial em órbita alta */}
+      <group ref={stationRef}>
+        {/* Toro externo */}
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[3, 0.25, 16, 64]} />
+          <meshBasicMaterial color="#7cf0ff" wireframe={true} opacity={0.6} transparent />
+        </mesh>
+
+        {/* Hub central */}
+        <mesh>
+          <cylinderGeometry args={[0.8, 0.8, 2, 16]} />
+          <meshBasicMaterial color="#7cf0ff" wireframe={true} />
+        </mesh>
+
+        {/* Painéis radiais */}
+        {Array.from({ length: 4 }).map((_, i) => (
+          <mesh key={`panel-${i}`} rotation={[0, (i * Math.PI) / 2, 0]} position={[0, 0, 0]}>
+            <boxGeometry args={[0.2, 0.8, 5]} />
+            <meshBasicMaterial color="#b8f7ff" wireframe={true} opacity={0.8} transparent />
+          </mesh>
+        ))}
+
+        {/* Módulos de acoplagem */}
+        {Array.from({ length: 6 }).map((_, i) => {
+          const angle = (i / 6) * Math.PI * 2;
+          const r = 4.2;
+          const x = Math.cos(angle) * r;
+          const z = Math.sin(angle) * r;
+          return (
+            <mesh key={`dock-${i}`} position={[x, 0, z]} rotation={[0, angle, 0]}>
+              <boxGeometry args={[0.6, 0.4, 1.2]} />
+              <meshBasicMaterial color="#7cf0ff" wireframe={true} />
+            </mesh>
+          );
+        })}
+
+        {/* Antenas / feixes */}
+        {Array.from({ length: 3 }).map((_, i) => (
+          <mesh key={`antenna-${i}`} rotation={[0, (i * Math.PI * 2) / 3, 0]}>
+            <cylinderGeometry args={[0.05, 0.05, 5, 8]} />
+            <meshBasicMaterial color="#00e0ff" wireframe={true} />
+          </mesh>
+        ))}
+      </group>
 
       {/* Mega Planeta C com pirâmides */}
       <group position={[0, 0, 0]}>
@@ -368,6 +423,10 @@ export function SmithShimanoSystem() {
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <ringGeometry args={[satelliteOrbitRadius1 - 0.05, satelliteOrbitRadius1 + 0.05, 64]} />
         <meshBasicMaterial color="#2c03a6" transparent opacity={0.15} side={THREE.DoubleSide} />
+      </mesh>
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[stationOrbitRadius - 0.1, stationOrbitRadius + 0.1, 64]} />
+        <meshBasicMaterial color="#7cf0ff" transparent opacity={0.12} side={THREE.DoubleSide} />
       </mesh>
     </group>
   );

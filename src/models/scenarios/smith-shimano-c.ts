@@ -3,6 +3,304 @@ import type { Scenario } from "../scenario";
 import { StationGraphMap } from "../station-graph-map";
 
 /**
+ * Centro Orbital de Pesquisa Smith-Shimano
+ * 
+ * Estação orbital em órbita baixa. Laboratórios avançados e centro de comunicações.
+ */
+export const smithShimanoOrbital = (): Scenario => {
+  const orbitalMap = new StationGraphMap({
+    levels: [
+      {
+        rooms: ["DOCKING_ALPHA", null, "DOCKING_BETA"],
+      },
+      {
+        rooms: [
+          {
+            id: "AIRLOCK_ALPHA",
+            type: "airlock",
+            pressureLossRisk: true,
+          },
+          null,
+          {
+            id: "AIRLOCK_BETA",
+            type: "airlock",
+            pressureLossRisk: true,
+          },
+        ],
+      },
+      { rooms: [null, "CENTRO_COMANDO_ORB", null] },
+      { rooms: ["LAB_XENOBIO_ORB", "LAB_MINERAL_ORB", "LAB_ARTEFATOS"] },
+      { rooms: ["COMUNICACOES_ORB", "DATACENTER_ORB", "OBSERVATORIO"] },
+      { rooms: ["ALOJAMENTOS_ORB", "REFEITORIO_ORB", "ENFERMARIA_ORB"] },
+      { rooms: [null, "GERADORES_ORB", null] },
+    ],
+    layout: {
+      gridSize: { columns: 3, rows: 7 },
+      airlockSizeModifier: { width: 0.6, height: 0.9 },
+      outerPadding: { top: 60 },
+      roomPadding: { horizontal: 60, vertical: 10 },
+    },
+    connections: [
+      { from: "DOCKING_ALPHA", to: "AIRLOCK_ALPHA", password: "SS-ORB-01" },
+      { from: "DOCKING_BETA", to: "AIRLOCK_BETA", password: "SS-ORB-01" },
+      { from: "AIRLOCK_ALPHA", to: "CENTRO_COMANDO_ORB" },
+      { from: "AIRLOCK_BETA", to: "CENTRO_COMANDO_ORB" },
+      { from: "CENTRO_COMANDO_ORB", to: "LAB_XENOBIO_ORB" },
+      { from: "CENTRO_COMANDO_ORB", to: "LAB_MINERAL_ORB" },
+      { from: "CENTRO_COMANDO_ORB", to: "LAB_ARTEFATOS" },
+      { from: "LAB_XENOBIO_ORB", to: "LAB_MINERAL_ORB" },
+      { from: "LAB_MINERAL_ORB", to: "LAB_ARTEFATOS" },
+      { from: "LAB_XENOBIO_ORB", to: "COMUNICACOES_ORB" },
+      { from: "LAB_MINERAL_ORB", to: "DATACENTER_ORB" },
+      { from: "LAB_ARTEFATOS", to: "OBSERVATORIO" },
+      { from: "COMUNICACOES_ORB", to: "DATACENTER_ORB" },
+      { from: "DATACENTER_ORB", to: "OBSERVATORIO" },
+      { from: "COMUNICACOES_ORB", to: "ALOJAMENTOS_ORB" },
+      { from: "DATACENTER_ORB", to: "REFEITORIO_ORB" },
+      { from: "OBSERVATORIO", to: "ENFERMARIA_ORB" },
+      { from: "ALOJAMENTOS_ORB", to: "REFEITORIO_ORB" },
+      { from: "REFEITORIO_ORB", to: "ENFERMARIA_ORB" },
+      { from: "ALOJAMENTOS_ORB", to: "GERADORES_ORB" },
+      { from: "REFEITORIO_ORB", to: "GERADORES_ORB" },
+      { from: "ENFERMARIA_ORB", to: "GERADORES_ORB" },
+    ],
+    diagnostics: {
+      title: "SISTEMA DE DIAGNÓSTICO - CENTRO ORBITAL SMITH-SHIMANO",
+      messages: [
+        { type: "notice" as const, message: "╔═══════════════════════════════════════════════════════════════════╗" },
+        { type: "notice" as const, message: "║    CENTRO ORBITAL DE PESQUISA SMITH-SHIMANO - DIAGNÓSTICO       ║" },
+        { type: "notice" as const, message: "╚═══════════════════════════════════════════════════════════════════╝" },
+        { type: "notice" as const, message: "" },
+        {
+          type: "check" as const,
+          message: ">>> INICIALIZANDO SISTEMAS ORBITAIS",
+          status: "OK",
+          delay: 2000,
+        },
+        { type: "notice" as const, message: "" },
+        { type: "notice" as const, message: "┌─ STATUS OPERACIONAL ─────────────────────────────────────────────┐" },
+        { type: "notice" as const, message: "│ 🛰 ÓRBITA: 450km - Estável                                      │" },
+        { type: "notice" as const, message: "│ 👥 TRIPULAÇÃO: 450/450 cientistas - Capacidade: 100%            │" },
+        { type: "notice" as const, message: "│ 🔬 LABORATÓRIOS: 3 ativos - Xenobio | Mineral | Artefatos      │" },
+        { type: "notice" as const, message: "│ ⚡ ENERGIA: Reatores de fusão - Autonomia: 25 anos              │" },
+        { type: "notice" as const, message: "└──────────────────────────────────────────────────────────────────┘" },
+        { type: "notice" as const, message: "" },
+        {
+          type: "check" as const,
+          message: ">> Sistemas de gravidade artificial",
+          status: "NOMINAL",
+          delay: 1500,
+        },
+        { type: "notice" as const, message: "   └─ GRAVIDADE: 1.0g - Ajustável: 0.2g a 1.5g" },
+        { type: "notice" as const, message: "" },
+        {
+          type: "check" as const,
+          message: ">> Sistemas de suporte vital",
+          status: "ÓTIMO",
+          delay: 1800,
+        },
+        { type: "notice" as const, message: "   ├─ OXIGÊNIO: 21% - Pressão: 1.0 atm" },
+        { type: "notice" as const, message: "   ├─ TEMPERATURA: 22°C - Umidade: 45%" },
+        { type: "notice" as const, message: "   └─ RECICLAGEM DE AR/ÁGUA: 99.8% eficiência" },
+        { type: "notice" as const, message: "" },
+        {
+          type: "check" as const,
+          message: ">> Comunicações quânticas",
+          status: "ATIVO",
+          delay: 2000,
+        },
+        { type: "notice" as const, message: "   ├─ UPLINK MATRIZ: CONECTADO" },
+        { type: "notice" as const, message: "   ├─ DOWNLINK DELTA-369: ATIVO" },
+        { type: "notice" as const, message: "   └─ LATÊNCIA: <1ms (comunicação quântica)" },
+        { type: "notice" as const, message: "" },
+        {
+          type: "warning" as const,
+          message: ">> Detritos orbitais",
+          status: "ALERTA",
+          delay: 2200,
+        },
+        { type: "warning" as const, message: "   ⚠ 247 objetos rastreados no raio de 10km" },
+        { type: "warning" as const, message: "   ⚠ Escudos deflectores: ATIVOS" },
+        { type: "notice" as const, message: "" },
+        { type: "notice" as const, message: "┌─ PESQUISAS ATIVAS ───────────────────────────────────────────────┐" },
+        { type: "notice" as const, message: "│ • Xenobiologia: 127 amostras em análise                         │" },
+        { type: "notice" as const, message: "│ • Mineralogia: Espectrometria de terras raras                   │" },
+        { type: "notice" as const, message: "│ • Artefatos: Estudo de fragmentos piramidais                    │" },
+        { type: "notice" as const, message: "│ • Astronomia: Mapeamento de anomalias gravitacionais            │" },
+        { type: "notice" as const, message: "└──────────────────────────────────────────────────────────────────┘" },
+        { type: "notice" as const, message: "" },
+        { type: "summary" as const, message: "════════════════════════════════════════════════════════════════════" },
+        { type: "summary" as const, message: "DIAGNÓSTICO COMPLETO - TODOS OS SISTEMAS OPERACIONAIS" },
+        { type: "summary" as const, message: "════════════════════════════════════════════════════════════════════" },
+      ],
+    },
+  });
+
+  const scenario: Scenario = {
+    id: "ESTACAO-ESPACIAL-SHIMANO",
+    name: "DELTA-369 // ESTAÇÃO ESPACIAL SHIMANO",
+    type: "station",
+    crew: { current: 450, capacity: 450 },
+    adminCredentials: { username: "ORBITAL-ADMIN", password: "SS-ORB-2450" },
+    charts: ["oxygen", "power"],
+    stats: {
+      "Altitude Orbital": "450 km",
+      "Gravidade": "1.0g (artificial)",
+      "Tripulação": "450 cientistas",
+      "Laboratórios": "3 ativos",
+      "Autonomia Energética": "25 anos",
+      "Comunicação": "Quântica",
+    },
+    exteriorStats: [
+      {
+        type: "rotationSpeed",
+        label: "VELOCIDADE ORBITAL",
+        unit: "km/s",
+        defaultValue: Array(30).fill(7.8),
+        min: 7.7,
+        max: 7.9,
+        isArray: true,
+      },
+      {
+        type: "surfaceTemp",
+        label: "TEMPERATURA INTERNA",
+        unit: "°C",
+        defaultValue: Array(30).fill(22),
+        min: 20,
+        max: 24,
+        isArray: true,
+      },
+    ],
+    pointsOfInterest: [
+      {
+        id: POI_ID.STELLAR_BURN,
+        user_facing_id: "01",
+        name: "Doca de Atracação Alpha",
+        description:
+          "Porta principal para naves de transporte. Capacidade: 4 naves simultaneamente.",
+      },
+      {
+        id: POI_ID.DRY_DOCK,
+        user_facing_id: "02",
+        name: "Doca de Atracação Beta",
+        description: "Porta secundária. Acesso VIP e emergências. Taxa: 8kcr/semana.",
+      },
+      {
+        id: POI_ID.CHOP_SHOP,
+        user_facing_id: "03",
+        name: "Laboratório de Xenobiologia",
+        description:
+          "Análise de amostras alienígenas. Nível de biossegurança 4. Capacidade: 127 amostras.",
+      },
+      {
+        id: POI_ID.ICE_BOX,
+        user_facing_id: "04",
+        name: "Laboratório de Mineralogia",
+        description:
+          "Espectrometria de terras raras. Equipamento nanométrico. Pureza: 99.9%.",
+      },
+      {
+        id: POI_ID.FARM,
+        user_facing_id: "05",
+        name: "Laboratório de Artefatos",
+        description:
+          "Estudo de fragmentos piramidais. Sala blindada. Radiação anômala detectada.",
+      },
+      {
+        id: POI_ID.CANYON_HEAVY_MARKET,
+        user_facing_id: "06",
+        name: "Centro de Comunicações",
+        description:
+          "Sistema quântico. Uplink direto com matriz Smith-Shimano. Latência: <1ms.",
+      },
+      {
+        id: POI_ID.COURT,
+        user_facing_id: "07",
+        name: "Observatório Astronômico",
+        description:
+          "Telescópios de longo alcance. Monitoramento de anomalias gravitacionais.",
+      },
+      {
+        id: POI_ID.TEMPEST_HQ,
+        user_facing_id: "08",
+        name: "Módulo de Geradores",
+        description:
+          "Reatores de fusão compacta. Autonomia: 25 anos. Potência: 450 MW.",
+      },
+    ],
+    map: orbitalMap,
+    controlButtons: [
+      {
+        label: "LABORATÓRIOS",
+        defaultState: true,
+        restricted: false,
+        type: "toggle",
+        toggleStates: {
+          true: "ATIVOS",
+          false: "SUSPENSOS",
+        },
+        linkedRoom: "LAB_MINERAL_ORB",
+      },
+      {
+        label: "GRAVIDADE ARTIFICIAL",
+        defaultState: true,
+        restricted: true,
+        type: "toggle",
+        toggleStates: {
+          true: "1.0g",
+          false: "0.0g",
+        },
+      },
+      {
+        label: "ESCUDOS DEFLECTORES",
+        defaultState: true,
+        restricted: false,
+        type: "toggle",
+        toggleStates: {
+          true: "ATIVOS",
+          false: "DESLIGADOS",
+        },
+      },
+      {
+        label: "COMUNICAÇÃO QUÂNTICA",
+        defaultState: true,
+        restricted: true,
+        type: "toggle",
+        toggleStates: {
+          true: "CONECTADO",
+          false: "OFFLINE",
+        },
+      },
+      {
+        label: "DOCA ALPHA",
+        defaultState: false,
+        restricted: true,
+        type: "toggle",
+        toggleStates: {
+          true: "DESTRANCADA",
+          false: "TRANCADA",
+        },
+        linkedRoom: "DOCKING_ALPHA",
+      },
+      {
+        label: "DOCA BETA",
+        defaultState: false,
+        restricted: true,
+        type: "toggle",
+        toggleStates: {
+          true: "DESTRANCADA",
+          false: "TRANCADA",
+        },
+        linkedRoom: "DOCKING_BETA",
+      },
+    ],
+    theme: "smith-shimano",
+  };
+
+  return scenario;
+};
+
+/**
  * Smith-Shimano Mega-Planet C
  * 
  * Um mega planeta com dois sóis (vermelho e amarelo) e satélites em órbita.
@@ -37,6 +335,12 @@ export const smithShimanoC = (): Scenario => {
       { rooms: ["GERADORES", "SALA_CONTROLE", "PIRAMIDE_SETHOS"] },
       { rooms: [null, "SITIO_OMEGA7", null] },
     ],
+    layout: {
+      gridSize: { columns: 3, rows: 9 },
+      airlockSizeModifier: { width: 0.6, height: 0.9 },
+      outerPadding: { top: 60 },
+      roomPadding: { horizontal: 60, vertical: 10 },
+    },
     connections: [
       { from: "PORTO_ALPHA", to: "AIRLOCK_NORTE", password: "SS-2450" },
       { from: "PORTO_BETA", to: "AIRLOCK_SUL", password: "SS-2450" },
@@ -157,21 +461,21 @@ export const smithShimanoC = (): Scenario => {
     adminCredentials: { username: "SMITH-ADMIN", password: "SHIMANO-CORP" },
     charts: ["oxygen", "power", "rare-earth"],
     stats: {
-      Diameter: "78,945km",
-      "Planet Class": "MEGA-TERRA",
-      "Binary Suns": "RED DWARF α / YELLOW GIANT β",
-      "Orbital Period": "847 Earth Days",
-      "Surface Gravity": "2.4g",
-      "Atmospheric Pressure": "3.2 atm",
-      "Temperature Range": "-45°C to 62°C",
-      Satellites: "7 Natural + 3 Artificial",
-      "Pyramid Structures": "12,847 Detected",
-      "Archaeological Sites": "Active",
+      "Diâmetro": "78.945 km",
+      "Classe Planetária": "MEGA-TERRA",
+      "Sóis Binários": "Anã Vermelha α / Gigante Amarela β",
+      "Período Orbital": "847 dias terrestres",
+      "Gravidade Superficial": "2,4g",
+      "Pressão Atmosférica": "3,2 atm",
+      "Faixa de Temperatura": "-45°C a 62°C",
+      "Satélites": "7 naturais + 3 artificiais",
+      "Estruturas Piramidais": "12.847 detectadas",
+      "Sítios Arqueológicos": "Ativos",
     },
     exteriorStats: [
       {
         type: "rotationSpeed",
-        label: "PLANETARY ROTATION",
+        label: "ROTAÇÃO PLANETÁRIA",
         unit: "rpm",
         defaultValue: Array(30).fill(0.3),
         min: 0.28,
@@ -180,7 +484,7 @@ export const smithShimanoC = (): Scenario => {
       },
       {
         type: "surfaceTemp",
-        label: "SURFACE TEMPERATURE",
+        label: "TEMPERATURA DA SUPERFÍCIE",
         unit: "°C",
         defaultValue: Array(30).fill(18),
         min: -45,
@@ -243,6 +547,13 @@ export const smithShimanoC = (): Scenario => {
         description:
           "Concentração de 1,247 pirâmides. Anomalias gravitacionais detectadas.",
       },
+      {
+        id: POI_ID.SMITH_SHIMANO_ORBITAL_STATION,
+        user_facing_id: "09",
+        name: "Centro Orbital de Pesquisa Smith-Shimano",
+        description:
+          "Estação orbital em órbita baixa. Laboratórios avançados e centro de comunicações. Capacidade: 450 cientistas.",
+      },
     ],
     map: baseMap,
     controlButtons: [
@@ -268,6 +579,13 @@ export const smithShimanoC = (): Scenario => {
         },
         linkedRoom: "ARQUEOLOGIA",
       },
+      {
+        label: "DADOS-ESTAÇÃO",
+        defaultState: false,
+        restricted: false,
+        type: "action",
+      },
+
       {
         label: "ENERGIA PIRÂMIDE",
         defaultState: true,
@@ -329,6 +647,12 @@ export const smithShimanoCWithMap = (): Scenario => {
       { rooms: ["BASE_CENTRAL"] },
     ],
     connections: [],
+    layout: {
+      gridSize: { columns: 3, rows: 1 },
+      airlockSizeModifier: { width: 0.6, height: 0.9 },
+      outerPadding: { top: 60 },
+      roomPadding: { horizontal: 60, vertical: 10 },
+    },
     diagnostics: {
       title: "DELTA-369 - SMITH-SHIMANO MEGA-PLANET - DIAGNÓSTICO PLANETÁRIO",
       messages: [
@@ -399,9 +723,9 @@ export const smithShimanoCWithMap = (): Scenario => {
     adminCredentials: { username: "SS-ADMIN", password: "SHIMANO-C" },
     charts: ["oxygen", "power"],
     stats: {
-      Diameter: "78,945km",
-      "Planet Class": "MEGA-TERRA",
-      "Binary Suns": "RED DWARF α / YELLOW GIANT β",
+      "Diâmetro": "78.945 km",
+      "Classe Planetária": "MEGA-TERRA",
+      "Sóis Binários": "Anã Vermelha α / Gigante Amarela β",
     },
     exteriorStats: [],
     pointsOfInterest: [],

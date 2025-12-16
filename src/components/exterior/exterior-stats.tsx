@@ -123,7 +123,7 @@ export function ExteriorStats() {
   // Render composition analysis section
   const renderComposition = () => {
     const composition =
-      compositionData[scenario.type] || compositionData.asteroid;
+      compositionData[scenario.type as keyof typeof compositionData] || compositionData.asteroid;
 
     let title = "ANÁLISE DE COMPOSIÇÃO";
     if (scenario.type === "planet") {
@@ -141,7 +141,7 @@ export function ExteriorStats() {
           <h3 className="font-bold">{title}</h3>
         </div>
         <div className="space-y-2">
-          {composition.map((item) => (
+          {composition.map((item: { name: string; value: number }) => (
             <div key={item.name}>
               <div className="flex justify-between mb-1">
                 <span>{item.name}</span>
@@ -445,6 +445,12 @@ const compositionData = {
     { name: "CORE TEMPERATURE", value: 98 },
   ],
   ship: [
+    { name: "HULL INTEGRITY", value: 96 },
+    { name: "THERMAL SHIELDING", value: 92 },
+    { name: "CORE INTEGRITY", value: 98 },
+    { name: "WARP CORE", value: 5 },
+  ],
+  "smith-shimano": [
     { name: "HULL INTEGRITY", value: 96 },
     { name: "THERMAL SHIELDING", value: 92 },
     { name: "CORE INTEGRITY", value: 98 },

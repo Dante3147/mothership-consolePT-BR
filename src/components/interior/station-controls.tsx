@@ -20,6 +20,7 @@ import { useState } from "react";
 import { AirlockControlPanel } from "./airlock-controls";
 import { ControlButton } from "./control-button";
 import { StationDataModal } from "./station-data-modal";
+import { OrbitalStationModal } from "./orbital-station-modal";
 
 /**
  * Renders a panel of controls for the station.
@@ -70,6 +71,7 @@ export function StationControls() {
 
   const [selectedAirlock, setSelectedAirlock] = useState<RoomId | null>(null);
   const [showStationData, setShowStationData] = useState(false);
+  const [showOrbitalStation, setShowOrbitalStation] = useState(false);
 
   const handleButtonClick = (buttonLable: string) => {
     // Find the button definition
@@ -79,6 +81,12 @@ export function StationControls() {
     // Check for station data button
     if (buttonLable === "DADOS-ESTAÇÃO") {
       setShowStationData(true);
+      return;
+    }
+
+    // Check for orbital station button
+    if (buttonLable === "MAPA-ORBITAL") {
+      setShowOrbitalStation(true);
       return;
     }
 
@@ -322,6 +330,11 @@ export function StationControls() {
       <StationDataModal
         open={showStationData}
         onClose={() => setShowStationData(false)}
+      />
+
+      <OrbitalStationModal
+        open={showOrbitalStation}
+        onClose={() => setShowOrbitalStation(false)}
       />
     </div>
   );

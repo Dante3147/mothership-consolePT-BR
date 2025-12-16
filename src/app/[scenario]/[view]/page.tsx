@@ -3,6 +3,7 @@
 import { EmergencyOverlay } from "@/src/components/emergency/emergency-overlay";
 import { ExteriorStats } from "@/src/components/exterior/exterior-stats";
 import { ExteriorView } from "@/src/components/exterior/exterior-view";
+import { OrbitalStationView } from "@/src/components/exterior/orbital-station-view";
 import { Footer } from "@/src/components/footer";
 import { Header } from "@/src/components/header";
 import { DiagnosticsView } from "@/src/components/interior/diagnostics-view";
@@ -145,7 +146,11 @@ function MainContent({
               case "interior-ascii":
                 return <AsciiInteriorView />;
               case "exterior":
-                return <ExteriorView />;
+                return scenario.type === "station" ? (
+                  <OrbitalStationView />
+                ) : (
+                  <ExteriorView />
+                );
               default:
                 return (
                   <div>

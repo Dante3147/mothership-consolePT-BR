@@ -123,6 +123,48 @@ export function Moon({ name, distance, size, speed, tilt = 0 }: MoonProps) {
   );
 }
 
+export function BlueSun() {
+  const sunRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (sunRef.current) {
+      sunRef.current.rotation.y += 0.002;
+    }
+  });
+
+  return (
+    <group>
+      {/* Aura do sol azul (glow) */}
+      <mesh position={[-25, 8, -15]}>
+        <sphereGeometry args={[5.5, 32, 32]} />
+        <meshBasicMaterial
+          color="#0088FF"
+          transparent
+          opacity={0.15}
+          side={THREE.BackSide}
+        />
+      </mesh>
+
+      {/* Sol azul principal */}
+      <mesh ref={sunRef} position={[-25, 8, -15]}>
+        <sphereGeometry args={[5, 32, 32]} />
+        <meshBasicMaterial color="#0088FF" wireframe />
+      </mesh>
+
+      {/* Superfície do sol com mais densidade */}
+      <mesh position={[-25, 8, -15]}>
+        <sphereGeometry args={[5, 64, 64]} />
+        <meshBasicMaterial
+          color="#0088FF"
+          wireframe
+          opacity={0.3}
+          transparent
+        />
+      </mesh>
+    </group>
+  );
+}
+
 export function Tao095System() {
   const moons = [
     { name: "ANUBIS", distance: 5, size: 0.25, speed: 0.008, tilt: 0 },
@@ -136,6 +178,7 @@ export function Tao095System() {
 
   return (
     <group>
+      <BlueSun />
       <Tao095Planet />
       {moons.map((moon) => (
         <Moon

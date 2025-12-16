@@ -77,23 +77,26 @@ export function StationGraphMap() {
   const [availableSpace, setAvailableSpace] = useState<{
     width: number;
     height: number;
-  }>({ width: 1000, height: 800 });
+  }>({ width: 1200, height: 1400 });
 
   // Update available space when container size changes
   useEffect(() => {
     const updateSize = () => {
       const container = document.querySelector(".station-map-container");
       if (container) {
-        // Account for the container's padding
+        // Account for the container's padding (32px on each side for p-4/p-8)
+        const padding = window.innerWidth >= 768 ? 64 : 32;
         setAvailableSpace({
-          width: container.clientWidth,
-          height: container.clientHeight,
+          width: container.clientWidth - padding,
+          height: Math.max(container.clientHeight - padding, 1200),
         });
       }
     };
 
     updateSize();
     window.addEventListener("resize", updateSize);
+    // Small delay to ensure DOM is ready
+    setTimeout(updateSize, 100);
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
@@ -375,7 +378,7 @@ export function StationGraphMap() {
 
   return (
     <div
-      className="station-map-container border border-primary p-4 md:p-8 h-[500px] md:h-[800px] relative overflow-hidden"
+      className="station-map-container border border-primary p-4 md:p-8 w-full h-full min-h-[700px] relative"
       style={{ userSelect: "none" }}
     >
       <div className="absolute top-2 left-2 z-10">
@@ -422,9 +425,9 @@ export function StationGraphMap() {
       </div>
 
       <svg
-        className="w-full h-full"
+        className="w-full h-full min-h-[650px]"
         viewBox={`0 0 ${availableSpace.width} ${availableSpace.height}`}
-        preserveAspectRatio="xMidYMid meet"
+        preserveAspectRatio="xMinYMin meet"
         style={{ position: "relative", zIndex: 1 }}
       >
         <g>

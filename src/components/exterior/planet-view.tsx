@@ -56,10 +56,10 @@ export function PlanetView() {
     <div className="border border-primary p-2 md:p-4 w-full h-full relative overflow-hidden">
       <div className="absolute top-2 left-2 z-10">
         <h2 className="text-lg md:text-xl font-bold">
-          {currentMap.name} - ORBITAL VIEW
+          {currentMap.name} - VISÃO ORBITAL
         </h2>
         <p className="text-xs md:text-sm">
-          PLANETARY POSITION: 127.45° / 83.92°
+          POSIÇÃO PLANETÁRIA: 127.45° / 83.92°
         </p>
       </div>
 
@@ -138,20 +138,20 @@ export function PlanetView() {
               : "bg-black text-primary border border-primary"
           }`}
         >
-          {isFreeCam ? "ORBITAL CAM" : "FREE CAM"}
+          {isFreeCam ? "CAM ORBITAL" : "CAM LIVRE"}
         </button>
       </div>
 
       <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 right-2 md:right-4 border border-primary bg-black/90 p-2 md:p-4">
         <div className="flex justify-between items-center">
-          <h3 className="font-bold text-sm md:text-lg">RESEARCH OPERATIONS</h3>
+          <h3 className="font-bold text-sm md:text-lg">OPERAÇÕES DE PESQUISA</h3>
           <div className="px-1 md:px-2 py-0.5 md:py-1 rounded bg-green-500 text-black uppercase font-bold text-[10px] md:text-xs">
-            ACTIVE
+            ATIVO
           </div>
         </div>
         <p className="text-xs md:text-base mt-1 md:mt-2">
-          Current research focus: Xenobiology. Atmospheric samples collected:
-          47. Anomalous readings detected in sector 7.
+          Foco de pesquisa atual: Xenobiologia. Amostras atmosféricas coletadas:
+          47. Leituras anômalas detectadas no setor 7.
         </p>
       </div>
     </div>
